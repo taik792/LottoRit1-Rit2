@@ -1,0 +1,153 @@
+LOTTO EVOLUTION PRO MAX – GUIDA PRATICA
+
+---
+
+1. COME LEGGERE IL PROGRAMMA
+
+---
+
+Ogni ruota mostra:
+
+- Ultima → ultimi 5 numeri usciti
+- Caldi → numeri più frequenti
+- Ambo → combinazione suggerita
+- Ciclo → ritardo / tempo di uscita
+- Indice → forza statistica
+- Saturazione → quanto è “carica” la ruota
+
+---
+
+2. SIGNIFICATO DEI VALORI
+
+---
+
+INDICE (FORZA)
+
+< 2   → debole
+2 - 4 → medio
+
+«4   → forte 🔥»
+
+👉 Più è alto = più il numero è “spinto”
+
+---
+
+CICLO (TEMPO / RITARDO)
+
+< 0.5 → appena uscito (scarico)
+0.8 - 2 → perfetto ✅
+
+«3 → ritardatario (può esplodere)»
+
+👉 NON è forza, ma momento
+
+---
+
+SATURAZIONE
+
+0.3 - 0.6 → normale
+0.7 - 1   → buona
+
+«1       → molto carica 🔥»
+
+👉 più è alta = più la ruota è attiva
+
+---
+
+3. COME SCEGLIERE UN AMBO
+
+---
+
+Un ambo è BUONO quando:
+
+✔ entrambi i numeri hanno:
+
+- indice sopra 3
+- ciclo tra 0.8 e 2
+
+✔ oppure:
+
+- uno molto forte (indice >4)
+- l’altro stabile
+
+---
+
+4. AMBI DA EVITARE
+
+---
+
+❌ ciclo troppo basso (0.1 / 0.2)
+→ numero appena uscito
+
+❌ indice sotto 2
+→ poco valore
+
+❌ numeri sbilanciati
+→ uno alto e uno morto
+
+---
+
+5. STRATEGIA REALE DI GIOCO
+
+---
+
+Metodo semplice:
+
+1) guarda TOP GIOCATE (in alto)
+2) scegli massimo 2–3 ambi
+3) gioca per 3-5 colpi
+4) NON inseguire
+
+---
+
+Metodo intelligente:
+
+- Ambata forte → numero con indice più alto
+- Ambo → leggero
+- eventuale terno → aggiungi 3° numero caldo
+
+---
+
+6. REGOLA D’ORO
+
+---
+
+INDICE = FORZA
+CICLO = TEMPO
+
+👉 serve SEMPRE l’unione dei due
+
+---
+
+7. ESEMPIO PRATICO
+
+---
+
+Ambo: 1–50
+
+Indice:
+3.4 | 4.4 → buono
+
+Ciclo:
+0.5 | 1.5 → uno scarico, uno perfetto
+
+👉 risultato:
+ambo giocabile ma non top
+
+---
+
+8. OBIETTIVO DEL SISTEMA
+
+---
+
+NON predire al 100%
+
+👉 ma trovare:
+
+- numeri più probabili
+- momenti migliori
+- ridurre errori
+
+---
+
+FINE GUIDA
