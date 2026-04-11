@@ -63,43 +63,30 @@ fetch("risultati.json")
 
   // ===== TOP =====
   const topDiv = document.getElementById("top");
-  topDiv.innerHTML = "";
-
   if (data.top) {
     data.top.forEach(g => {
       const el = document.createElement("div");
       el.className = "card top";
-      el.innerHTML = `
-        <b>${g.ruota}</b><br>
-        ${g.ambo.join(" - ")}
-      `;
+      el.innerHTML = `<b>${g.ruota}</b><br>${g.ambo.join(" - ")}`;
       topDiv.appendChild(el);
     });
   }
 
   // ===== JOLLY =====
   const jollyDiv = document.getElementById("jolly");
-  jollyDiv.innerHTML = "";
-
   if (data.jolly && data.jolly.ambo) {
     const el = document.createElement("div");
     el.className = "card jolly";
-    el.innerHTML = `
-      ${data.jolly.ruota}<br>
-      ${data.jolly.ambo.join(" - ")}
-    `;
+    el.innerHTML = `<b>${data.jolly.ruota}</b><br>${data.jolly.ambo.join(" - ")}`;
     jollyDiv.appendChild(el);
   }
 
   // ===== RUOTE =====
   const container = document.getElementById("giocate");
-  container.innerHTML = "";
 
   if (data.ruote) {
     Object.keys(data.ruote).forEach(ruota => {
       const r = data.ruote[ruota];
-
-      if (!r || !r.ambo) return;
 
       const el = document.createElement("div");
       el.className = "card";
