@@ -2,123 +2,137 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lotto Elite Pro</title>
 
 <style>
 body {
-  background: #0b1320;
+  background: #06121f;
   color: white;
   font-family: Arial;
-  text-align: center;
+  margin: 0;
+  padding: 15px;
 }
 
 h1 {
+  text-align: center;
   color: #00ffc3;
 }
 
-.container {
+.section {
+  margin-top: 25px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  padding: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .card {
-  background: #111c2e;
+  border: 2px solid #00ffc3;
+  border-radius: 12px;
   padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #00ffc3;
+  text-align: center;
+  background: #0c1f33;
 }
 
-.top {
+.card h3 {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.numbers {
+  font-size: 22px;
+  font-weight: bold;
+  color: #00ffc3;
+}
+
+.top-card {
   border: 2px solid gold;
+  background: #1a1a00;
 }
 
 .jolly {
   border: 2px solid red;
+  background: #2a0000;
 }
 </style>
-
 </head>
 
 <body>
 
 <h1>🔥 LOTTO ELITE PRO</h1>
 
-<h2>🎯 TOP</h2>
-<div id="top" class="container"></div>
+<!-- TOP -->
+<div class="section">
+  <div class="title">🎯 TOP</div>
+  <div id="top" class="grid"></div>
+</div>
 
-<h2>💣 JOLLY</h2>
-<div id="jolly" class="container"></div>
+<!-- JOLLY -->
+<div class="section">
+  <div class="title">💣 JOLLY</div>
+  <div id="jolly"></div>
+</div>
 
-<h2>📊 RUOTE</h2>
-<div id="giocate" class="container"></div>
+<!-- RUOTE -->
+<div class="section">
+  <div class="title">📊 RUOTE</div>
+  <div id="ruote" class="grid"></div>
+</div>
 
 <script>
 fetch("risultati.json")
 .then(res => res.json())
 .then(data => {
 
-  console.log("DATI:", data);
-
   // ===== TOP =====
   const topDiv = document.getElementById("top");
-  topDiv.innerHTML = "";
 
-  if (data.top && data.top.length) {
-    data.top.forEach(g => {
-      const el = document.createElement("div");
-      el.className = "card top";
-
-      el.innerHTML = `
-        <b>${g.ruota || "?"}</b><br>
-        ${g.ambo ? g.ambo.join(" - ") : "N/A"}
-      `;
-
-      topDiv.appendChild(el);
-    });
-  }
+  data.top.forEach(t => {
+    const div = document.createElement("div");
+    div.className = "card top-card";
+    div.innerHTML = `
+      <h3>${t.ruota}</h3>
+      <div class="numbers">${t.ambo.join(" - ")}</div>
+    `;
+    topDiv.appendChild(div);
+  });
 
   // ===== JOLLY =====
   const jollyDiv = document.getElementById("jolly");
-  jollyDiv.innerHTML = "";
 
   if (data.jolly && data.jolly.ambo) {
-    const el = document.createElement("div");
-    el.className = "card jolly";
-
-    el.innerHTML = `
-      <b>${data.jolly.ruota}</b><br>
-      ${data.jolly.ambo.join(" - ")}
+    const div = document.createElement("div");
+    div.className = "card jolly";
+    div.innerHTML = `
+      <h3>${data.jolly.ruota}</h3>
+      <div class="numbers">${data.jolly.ambo.join(" - ")}</div>
     `;
-
-    jollyDiv.appendChild(el);
+    jollyDiv.appendChild(div);
   }
 
   // ===== RUOTE =====
-  const container = document.getElementById("giocate");
-  container.innerHTML = "";
+  const ruoteDiv = document.getElementById("ruote");
 
-  if (data.ruote) {
-    Object.keys(data.ruote).forEach(ruota => {
-      const r = data.ruote[ruota];
+  Object.keys(data.ruota).forEach(r => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <h3>${r}</h3>
+      <div class="numbers">${data.ruota[r].join(" - ")}</div>
+    `;
+    ruoteDiv.appendChild(div);
+  });
 
-      const el = document.createElement("div");
-      el.className = "card";
-
-      el.innerHTML = `
-        <b>${ruota}</b><br>
-        ${r && r.ambo ? r.ambo.join(" - ") : "N/A"}
-      `;
-
-      container.appendChild(el);
-    });
-  }
-
-})
-.catch(err => {
-  console.error(err);
-  document.body.innerHTML = "<h2 style='color:red'>Errore caricamento dati</h2>";
 });
 </script>
 
