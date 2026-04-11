@@ -8,30 +8,59 @@
 
 <style>
 
+/* ===== BASE ===== */
 body {
     margin:0;
     font-family: Arial, sans-serif;
     background:#06121f;
     color:white;
     text-align:center;
+    max-width:900px;
+    margin:auto;
 }
 
 /* ===== TITOLI ===== */
 h1 {
     color:#00ffc3;
     margin:20px 0;
+    font-size:32px;
+}
+
+@media (min-width:601px){
+    h1 {
+        font-size:40px;
+    }
 }
 
 h2 {
     margin-top:30px;
 }
 
-/* ===== GRIGLIA ===== */
-.grid {
+/* ===== GRIGLIE ===== */
+.grid,
+.top-container,
+.estrazione {
     display:grid;
-    grid-template-columns: repeat(3, 1fr);
     gap:12px;
     padding:10px;
+}
+
+/* 📱 MOBILE */
+@media (max-width:600px){
+    .grid,
+    .top-container,
+    .estrazione {
+        grid-template-columns: repeat(3,1fr);
+    }
+}
+
+/* 💻 PC */
+@media (min-width:601px){
+    .grid,
+    .top-container,
+    .estrazione {
+        grid-template-columns: repeat(4,1fr);
+    }
 }
 
 /* ===== CARD ===== */
@@ -42,7 +71,7 @@ h2 {
     background:#0c1f33;
 }
 
-/* ===== TOP CARD (EVIDENZIATE) ===== */
+/* ===== TOP EVIDENZIATI ===== */
 .top-card {
     border:2px solid gold;
     box-shadow:0 0 10px gold;
@@ -62,13 +91,6 @@ h2 {
 }
 
 /* ===== TOP ===== */
-.top-container {
-    display:grid;
-    grid-template-columns: repeat(3,1fr);
-    gap:12px;
-    padding:10px;
-}
-
 .top-box {
     border:2px solid gold;
     border-radius:12px;
@@ -89,13 +111,6 @@ h2 {
 }
 
 /* ===== ESTRAZIONE ===== */
-.estrazione {
-    display:grid;
-    grid-template-columns: repeat(3,1fr);
-    gap:12px;
-    padding:10px;
-}
-
 .estrazione-card {
     border:2px solid #00ffc3;
     border-radius:12px;
