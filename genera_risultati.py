@@ -32,33 +32,9 @@ for ruota in RUOTE:
             ritardo += 1
         ritardi[n] = ritardo
 
-    # score migliorato
+    # score
     score_numeri = {}
     for n in range(1,91):
         score_numeri[n] = ritardi[n]*3 + frequenze[n]
 
-    ordinati = sorted(score_numeri.items(), key=lambda x: x[1], reverse=True)
-
-    ultima = estrazioni[ruota][-1]
-
-    candidati = [n for n,s in ordinati if n not in ultima]
-
-    best_ambo = None
-    best_score = -1
-
-    # prova combinazioni TOP 12 numeri
-    for i in range(12):
-        for j in range(i+1,12):
-
-            n1 = candidati[i]
-            n2 = candidati[j]
-
-            # ❌ evita numeri troppo vicini
-            if abs(n1 - n2) <= 2:
-                continue
-
-            # ❌ evita duplicati globali
-            if n1 in global_usati or n2 in global_usati:
-                continue
-
-            score = score_numeri[n1] + score_n
+    ordinati = sorted
