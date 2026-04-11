@@ -14,6 +14,7 @@ body {
   text-align: center;
 }
 
+/* ===== TITOLI ===== */
 h1 {
   color: #00ffc3;
   font-size: 22px;
@@ -26,18 +27,27 @@ h1 {
   color: #ccc;
 }
 
+/* ===== GRIGLIA ===== */
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
   padding: 0 10px;
 }
 
+/* MOBILE */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===== CARD ===== */
 .card {
   background: #0c2436;
   border: 2px solid #00ffc3;
-  border-radius: 10px;
-  padding: 8px;
+  border-radius: 12px;
+  padding: 10px;
 }
 
 .top {
@@ -139,7 +149,6 @@ fetch("risultati.json")
   Object.keys(data.ruote).forEach(ruota => {
 
     const r = data.ruote[ruota];
-
     if (!r || !r.ambo) return;
 
     const div = document.createElement("div");
