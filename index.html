@@ -1,40 +1,16 @@
+<script>
 fetch("risultati.json")
-  .then(res => res.json())
-  .then(data => {
+.then(res => res.json())
+.then(data => {
 
-    const container = document.getElementById("giocate");
+  // ===== TOP GIOCATE =====
+  const topDiv = document.getElementById("top");
+  topDiv.innerHTML = "";
 
-    // ===== TOP =====
-    const topDiv = document.getElementById("top");
+  if (data.top && data.top.length > 0) {
     data.top.forEach(g => {
       const el = document.createElement("div");
       el.className = "card top";
-      el.innerHTML = `<b>${g[0]}</b><br>${g[1].join(" - ")}`;
-      topDiv.appendChild(el);
-    });
-
-    // ===== JOLLY =====
-    const jollyDiv = document.getElementById("jolly");
-    jollyDiv.innerHTML = `
-      <div class="card" style="border:2px solid red">
-        <b>${data.jolly.ruota}</b><br>
-        ${data.jolly.ambo.join(" - ")}
-      </div>
-    `;
-
-    // ===== RUOTE =====
-    Object.keys(data.ruote).forEach(ruota => {
-      const r = data.ruote[ruota];
-
-      const el = document.createElement("div");
-      el.className = "card";
 
       el.innerHTML = `
-        <b>${ruota}</b><br>
-        ${r.ambo.join(" - ")}
-      `;
-
-      container.appendChild(el);
-    });
-
-  });
+        <b
