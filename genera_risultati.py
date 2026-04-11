@@ -14,18 +14,18 @@ global_usati = set()
 
 for ruota in RUOTE:
 
-    storico = estrazioni[ruota][-60:]  # più storico
+    storico = estrazioni[ruota][-60:]
 
     ritardi = {}
     frequenze = defaultdict(int)
+    range_medio = {}
 
-    # frequenze
+    # ===== FREQUENZE =====
     for estr in storico:
         for n in estr:
             frequenze[n] += 1
 
-    # ritardi + range medio
-    range_medio = {}
+    # ===== RANGE MEDIO =====
     for n in range(1,91):
         pos = []
         for i,estr in enumerate(storico):
@@ -38,7 +38,7 @@ for ruota in RUOTE:
         else:
             range_medio[n] = 10
 
-    # ritardo attuale
+    # ===== RITARDO =====
     for n in range(1,91):
         rit = 0
         for estr in reversed(storico):
@@ -47,13 +47,13 @@ for ruota in RUOTE:
             rit += 1
         ritardi[n] = rit
 
-    # 🔥 SCORE MIGLIORATO
+    # ===== SCORE =====
     score_numeri = {}
     for n in range(1,91):
 
         range_score = 0
         if ritardi[n] >= range_medio[n]:
-            range_score = 20  # pronto a uscire
+            range_score = 20
 
         score_numeri[n] = (
             ritardi[n]*2 +
@@ -65,21 +65,33 @@ for ruota in RUOTE:
 
     ultima = estrazioni[ruota][-1]
 
-    # 🎲 VARIAZIONE (non sempre stessi numeri)
-    candidati = [n for n,s in ordinati[:25] if n not in ultima]
+    # ===== POOL DINAMICO (ANTI FISSO) =====
+    top_pool = ordinati[:40]
+    random.shuffle(top_pool)
+
+    candidati = []
+    for n,score in top_pool:
+        if n not in ultima and score > 10:
+            candidati.append(n)
+
+    if len(candidati) < 10:
+        candidati = [n for n,s in ordinati[:50] if n not in ultima]
 
     best_ambo = None
     best_score = -1
 
-    for _ in range(30):  # prova combinazioni random
+    # ===== SCELTA RANDOM INTELLIGENTE =====
+    for _ in range(80):
 
         n1, n2 = random.sample(candidati, 2)
 
         if abs(n1 - n2) <= 2:
             continue
 
+        # anti ripetizione globale (ma non troppo rigido)
         if n1 in global_usati or n2 in global_usati:
-            continue
+            if random.random() < 0.7:
+                continue
 
         score = score_numeri[n1] + score_numeri[n2]
 
@@ -105,7 +117,7 @@ for nome, dati in top:
     global_usati.update(dati["ambo"])
 
 # ===== JOLLY =====
-jolly_ruota = top[0][0]
+jolly_ruota = random.choice(top)[0]  # non sempre il primo!
 risultati["jolly"] = {
     "ruota": jolly_ruota,
     "ambo": risultati["ruote"][jolly_ruota]["ambo"]
@@ -115,4 +127,4 @@ risultati["jolly"] = {
 with open("risultati.json","w",encoding="utf-8") as f:
     json.dump(risultati,f,indent=2)
 
-print("🔥 MOTORE 3 PRO DEFINITIVO ATTIVO")
+print("🔥 MOTORE 3 PRO ATTIVO (ANTI-FISSO)")
