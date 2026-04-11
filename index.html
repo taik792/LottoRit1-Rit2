@@ -1,45 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Lotto Elite Pro Motore3</title>
+
+<style>
+body {
+  background: #0b1320;
+  color: white;
+  font-family: Arial;
+  text-align: center;
+}
+
+h1 {
+  color: #00ffc3;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 10px;
+}
+
+.card {
+  background: #111c2e;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #00ffc3;
+}
+
+.top {
+  border: 2px solid gold;
+}
+
+.jolly {
+  border: 2px solid red;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🔥 LOTTO ELITE PRO Motore3</h1>
+
+<h2>🎯 Giocate Consigliate</h2>
+<div id="top" class="container"></div>
+
+<h2>💣 Jolly</h2>
+<div id="jolly" class="container"></div>
+
+<h2>📊 Tutte le ruote</h2>
+<div id="giocate" class="container"></div>
+
 <script>
 fetch("risultati.json")
 .then(res => res.json())
 .then(data => {
 
-  console.log("DATI:", data); // DEBUG
+  console.log("DATI:", data);
 
   // ===== TOP =====
   const topDiv = document.getElementById("top");
-  if (topDiv) {
-    topDiv.innerHTML = "";
+  topDiv.innerHTML = "";
 
-    if (data.top) {
-      data.top.forEach(g => {
-        const el = document.createElement("div");
-        el.innerHTML = `${g.ruota} → ${g.ambo?.join(" - ") || ""}`;
-        topDiv.appendChild(el);
-      });
-    }
+  if (data.top) {
+    data.top.forEach(g => {
+      const el = document.createElement("div");
+      el.className = "card top";
+      el.innerHTML = `
+        <b>${g.ruota}</b><br>
+        ${g.ambo.join(" - ")}
+      `;
+      topDiv.appendChild(el);
+    });
   }
 
   // ===== JOLLY =====
   const jollyDiv = document.getElementById("jolly");
-  if (jollyDiv && data.jolly && data.jolly.ambo) {
-    jollyDiv.innerHTML = `
-      ${data.jolly.ruota} → ${data.jolly.ambo.join(" - ")}
+  jollyDiv.innerHTML = "";
+
+  if (data.jolly && data.jolly.ambo) {
+    const el = document.createElement("div");
+    el.className = "card jolly";
+    el.innerHTML = `
+      ${data.jolly.ruota}<br>
+      ${data.jolly.ambo.join(" - ")}
     `;
+    jollyDiv.appendChild(el);
   }
 
   // ===== RUOTE =====
   const container = document.getElementById("giocate");
-  if (container && data.ruote) {
-    container.innerHTML = "";
+  container.innerHTML = "";
 
+  if (data.ruote) {
     Object.keys(data.ruote).forEach(ruota => {
       const r = data.ruote[ruota];
 
       if (!r || !r.ambo) return;
 
       const el = document.createElement("div");
+      el.className = "card";
+
       el.innerHTML = `
-        ${ruota} → ${r.ambo.join(" - ")}
+        <b>${ruota}</b><br>
+        ${r.ambo.join(" - ")}<br>
+        <small>Score: ${r.score || 0}</small>
       `;
 
       container.appendChild(el);
@@ -52,3 +120,6 @@ fetch("risultati.json")
   console.error(err);
 });
 </script>
+
+</body>
+</html>
