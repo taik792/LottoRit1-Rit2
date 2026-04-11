@@ -2,103 +2,103 @@
   "ruote": {
     "Bari": {
       "ambo": [
-        66,
-        13
+        41,
+        66
       ],
-      "score": 247.0
+      "score": 280.0
     },
     "Cagliari": {
       "ambo": [
-        52,
-        81
+        26,
+        72
       ],
-      "score": 240.5
+      "score": 280.0
     },
     "Firenze": {
       "ambo": [
-        47,
-        19
+        80,
+        37
       ],
-      "score": 277.0
+      "score": 277.5
     },
     "Genova": {
       "ambo": [
-        49,
-        6
+        3,
+        66
       ],
-      "score": 251.0
+      "score": 238.5
     },
     "Milano": {
       "ambo": [
-        77,
-        44
+        47,
+        61
       ],
-      "score": 255.0
+      "score": 257.0
     },
     "Napoli": {
       "ambo": [
-        36,
-        40
+        46,
+        36
       ],
       "score": 279.5
     },
     "Palermo": {
       "ambo": [
-        90,
-        45
+        46,
+        4
       ],
-      "score": 277.5
+      "score": 229.5
     },
     "Roma": {
       "ambo": [
-        17,
-        7
+        63,
+        40
       ],
-      "score": 273.5
+      "score": 263.5
     },
     "Torino": {
       "ambo": [
-        65,
-        49
+        88,
+        46
       ],
       "score": 280.0
     },
     "Venezia": {
       "ambo": [
-        80,
+        31,
         3
       ],
-      "score": 254.5
+      "score": 227.0
     }
   },
   "top": [
     {
+      "ruota": "Bari",
+      "ambo": [
+        41,
+        66
+      ]
+    },
+    {
+      "ruota": "Cagliari",
+      "ambo": [
+        26,
+        72
+      ]
+    },
+    {
       "ruota": "Torino",
       "ambo": [
-        65,
-        49
-      ]
-    },
-    {
-      "ruota": "Napoli",
-      "ambo": [
-        36,
-        40
-      ]
-    },
-    {
-      "ruota": "Palermo",
-      "ambo": [
-        90,
-        45
+        88,
+        46
       ]
     }
   ],
   "jolly": {
-    "ruota": "Palermo",
+    "ruota": "Bari",
     "ambo": [
-      90,
-      45
+      41,
+      66
     ]
   }
 }
