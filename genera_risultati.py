@@ -1,189 +1,78 @@
 import json
-import random
+from collections import Counter
 
-RUOTE = ["Bari","Cagliari","Firenze","Genova","Milano","Napoli","Palermo","Roma","Torino","Venezia","Nazionale"]
+RUOTE = ["Bari","Cagliari","Firenze","Genova","Milano",
+         "Napoli","Palermo","Roma","Torino","Venezia"]
 
 # ===== CARICA DATI =====
 with open("estrazioni.json", encoding="utf-8") as f:
-    estrazioni = json.load(f)
+    data = json.load(f)
 
-risultati = {
-    "top": [],
-    "ruote": {},
-    "giocate": [],
-    "jolly": {}
-}
+def ritardi(estrazioni):
+    rit = {n: 0 for n in range(1, 91)}
+    for estr in reversed(estrazioni):
+        for n in range(1, 91):
+            if n not in estr:
+                rit[n] += 1
+            else:
+                rit[n] = 0
+    return rit
 
-# ===== FREQUENZE =====
-def calcola_freq(lista):
-    freq = {}
-    for estr in lista:
-        for n in estr:
-            freq[n] = freq.get(n, 0) + 1
-    return freq
+def numeri_frequenti_recenti(estrazioni, n=20):
+    recenti = estrazioni[-n:]
+    tutti = []
+    for estr in recenti:
+        tutti.extend(estr)
+    count = Counter(tutti)
+    return [num for num, _ in count.most_common(10)]
 
-# ===== ANALISI RUOTE =====
+output = {}
+giocate_top = []
+
 for ruota in RUOTE:
+    estrazioni = data[ruota]
 
-    if ruota not in estrazioni:
-        continue
+    rit = ritardi(estrazioni)
+    top_rit = sorted(rit.items(), key=lambda x: x[1], reverse=True)
 
-    estrazioni_ruota = estrazioni[ruota]
+    R1 = top_rit[0][0]
 
-    if len(estrazioni_ruota) < 20:
-        continue
+    frequenti = numeri_frequenti_recenti(estrazioni)
 
-    ultime = estrazioni_ruota[-1]
+    # scegli numero compatibile diverso da R1
+    C1 = None
+    for n in frequenti:
+        if n != R1:
+            C1 = n
+            break
 
-    breve = estrazioni_ruota[-20:]
-    medio = estrazioni_ruota[-100:]
-    lungo = estrazioni_ruota[-500:]
+    ambo = sorted([R1, C1])
 
-    freq_breve = calcola_freq(breve)
-    freq_medio = calcola_freq(medio)
-    freq_lungo = calcola_freq(lungo)
-
-    # ===== RITARDI =====
-    ritardi = {}
-    for n in range(1, 91):
-        ritardo = 0
-        for estr in reversed(estrazioni_ruota):
-            if n in estr:
-                break
-            ritardo += 1
-        ritardi[n] = ritardo
-
-    score_num = {}
-    ultime_5 = estrazioni_ruota[-5:]
-
-    for n in range(1, 91):
-
-        penalita = 10 if n in ultime else 0
-        presenze_recenti = sum(1 for estr in ultime_5 if n in estr)
-        bonus_vicini = 1 if (n-1 in ultime or n+1 in ultime) else 0
-
-        score = (
-            freq_breve.get(n, 0) * 3 +
-            freq_medio.get(n, 0) * 1.5 +
-            freq_lungo.get(n, 0) * 1 +
-            (ritardi[n] ** 1.2) * 0.5 +
-            presenze_recenti * 2 +
-            bonus_vicini -
-            penalita
-        )
-
-        if ritardi[n] > 20:
-            score += ritardi[n] * 0.3
-
-        if freq_breve.get(n, 0) > 2 and freq_lungo.get(n, 0) > 15:
-            score += 5
-
-        score += random.uniform(0, 0.5)
-
-        score_num[n] = score
-
-    # ===== SCELTA AMBO =====
-    candidati = [n for n in range(1, 91) if n not in ultime]
-    candidati.sort(key=lambda x: score_num[x], reverse=True)
-
-    ambo = [candidati[0], candidati[1]]
-    score_ambo = score_num[ambo[0]] + score_num[ambo[1]]
-
-    risultati["ruote"][ruota] = {
-        "ultima": ultime,
-        "ambo": ambo,
-        "score": score_ambo
+    output[ruota] = {
+        "ambo": ambo
     }
 
-# ===== TOP 3 =====
-top_sorted = sorted(
-    risultati["ruote"].items(),
-    key=lambda x: x[1]["score"],
-    reverse=True
-)
+    giocate_top.append((ruota, ambo))
 
-top3 = top_sorted[:3]
+# ===== TOP 3 GIOCATE =====
+giocate_top = giocate_top[:3]
 
-risultati["top"] = [t[0] for t in top3]
+# ===== JOLLY = RUOTA SUCCESSIVA =====
+def ruota_jolly(ruota):
+    idx = RUOTE.index(ruota)
+    return RUOTE[(idx + 1) % len(RUOTE)]
 
-giocate = []
-for ruota, dati in top3:
-    giocate.append({
-        "ruota": ruota,
-        "ambo": dati["ambo"]
-    })
-
-risultati["giocate"] = giocate
-
-# ===== JOLLY INTELLIGENTE =====
-
-gemelle = {
-    "Bari": "Napoli",
-    "Napoli": "Bari",
-    "Milano": "Torino",
-    "Torino": "Milano",
-    "Palermo": "Cagliari",
-    "Cagliari": "Palermo",
-    "Firenze": "Genova",
-    "Genova": "Firenze"
-}
-
-# 1. miglior ambo globale
-miglior_ambo = None
-miglior_score = 0
-ruota_origine = None
-
-for ruota, dati in risultati["ruote"].items():
-    if dati["score"] > miglior_score:
-        miglior_score = dati["score"]
-        miglior_ambo = dati["ambo"]
-        ruota_origine = ruota
-
-ruote_top = [g["ruota"] for g in risultati["giocate"]]
-
-# ===== TEST NAZIONALE =====
-usa_nazionale = False
-
-if "Nazionale" in estrazioni:
-
-    ultime_20_naz = estrazioni["Nazionale"][-20:]
-    presenza = 0
-
-    for estr in ultime_20_naz:
-        for n in miglior_ambo:
-            if n in estr:
-                presenza += 1
-
-    if presenza >= 1:
-        usa_nazionale = True
-
-# ===== SCELTA RUOTA JOLLY =====
-
-if usa_nazionale and "Nazionale" not in ruote_top:
-    ruota_jolly = "Nazionale"
-
-else:
-    ruota_jolly = gemelle.get(ruota_origine)
-
-    if ruota_jolly not in risultati["ruote"] or ruota_jolly in ruote_top:
-        candidati = [
-            r for r in risultati["ruote"]
-            if r != ruota_origine and r not in ruote_top
-        ]
-
-        if candidati:
-            ruota_jolly = max(candidati, key=lambda r: risultati["ruote"][r]["score"])
-        else:
-            ruota_jolly = ruota_origine
-
-# ===== ASSEGNA JOLLY =====
-risultati["jolly"] = {
-    "ruota": ruota_jolly,
-    "ambo": miglior_ambo
+jolly = {
+    "ruota": ruota_jolly(giocate_top[0][0]),
+    "ambo": giocate_top[0][1]
 }
 
 # ===== SALVA =====
 with open("risultati.json", "w", encoding="utf-8") as f:
-    json.dump(risultati, f, indent=2)
+    json.dump({
+        "ruote": output,
+        "top": giocate_top,
+        "jolly": jolly
+    }, f, indent=2)
 
-print("🔥 PRO MAX ATTIVO (TOP + JOLLY SMART + NAZIONALE INTELLIGENTE)")
+print("🔥 Motore 3 generato")
