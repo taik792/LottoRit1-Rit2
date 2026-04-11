@@ -1,65 +1,100 @@
 import json
+from collections import Counter
 
 RUOTE = ["Bari","Cagliari","Firenze","Genova","Milano",
          "Napoli","Palermo","Roma","Torino","Venezia"]
 
-def calcola_ritardi(estrazioni):
-    ritardi = {n: 0 for n in range(1, 91)}
-
-    for estr in reversed(estrazioni):
-        usciti = set(estr)
-        for n in ritardi:
-            if n in usciti:
-                ritardi[n] = 0
-            else:
-                ritardi[n] += 1
-
-    return ritardi
-
+# ===== CARICA ESTRAZIONI =====
 with open("estrazioni.json", encoding="utf-8") as f:
     data = json.load(f)
 
-output = {
-    "ruota": {},
-    "top": [],
-    "jolly": {}
-}
+risultati = {"ruote": {}, "top": [], "jolly": {}}
 
+def ritardi(lista):
+    rit = {}
+    ultimi = lista[-200:]  # storico corto = più preciso
+    for n in range(1, 91):
+        rit[n] = 0
+        for estr in reversed(ultimi):
+            if n in estr:
+                break
+            rit[n] += 1
+    return rit
+
+def frequenze(lista):
+    ultimi = lista[-20:]
+    flat = [n for estr in ultimi for n in estr]
+    return Counter(flat)
+
+def genera_ambo(ruota, estrazioni):
+    r = ritardi(estrazioni)
+    f = frequenze(estrazioni)
+
+    # top ritardatari
+    top_r = sorted(r.items(), key=lambda x: x[1], reverse=True)[:5]
+
+    base = top_r[0][0]  # ritardatario più forte
+
+    candidati = []
+
+    for n in range(1, 91):
+        if n == base:
+            continue
+
+        score = 0
+
+        # ritardo
+        score += r[n] * 2
+
+        # frequenza recente
+        score += f[n] * 5
+
+        # vicinanza
+        if abs(n - base) <= 2:
+            score += 10
+        if abs(n - base) == 10:
+            score += 6
+
+        candidati.append((n, score))
+
+    candidati.sort(key=lambda x: x[1], reverse=True)
+
+    secondo = candidati[0][0]
+
+    return [base, secondo], candidati[0][1]
+
+
+# ===== GENERAZIONE =====
 for ruota in RUOTE:
-    estrazioni = data[ruota][-120:]  # più storico = meglio
+    estrazioni = data[ruota]
 
-    ritardi = calcola_ritardi(estrazioni)
+    ambo, score = genera_ambo(ruota, estrazioni)
 
-    # top 6 ritardatari
-    top = sorted(ritardi, key=ritardi.get, reverse=True)[:6]
-
-    # combinazioni intelligenti
-    coppie = [
-        (top[0], top[2]),
-        (top[1], top[3]),
-        (top[0], top[4])
-    ]
-
-    # scegli quella con ritardo totale più alto
-    best = max(coppie, key=lambda x: ritardi[x[0]] + ritardi[x[1]])
-
-    output["ruota"][ruota] = list(best)
+    risultati["ruote"][ruota] = {
+        "ambo": ambo,
+        "score": score
+    }
 
 # ===== TOP =====
-top_ruote = list(output["ruota"].items())[:3]
+top3 = sorted(risultati["ruote"].items(),
+              key=lambda x: x[1]["score"],
+              reverse=True)[:3]
 
-for r, ambo in top_ruote:
-    output["top"].append({
-        "ruota": r,
-        "ambo": ambo
+for nome, dati in top3:
+    risultati["top"].append({
+        "ruota": nome,
+        "ambo": dati["ambo"]
     })
 
 # ===== JOLLY =====
-if output["top"]:
-    output["jolly"] = output["top"][0]
+best = top3[0]
+risultati["jolly"] = {
+    "ruota": best[0],
+    "ambo": best[1]["ambo"]
+}
 
 # ===== SALVA =====
 with open("risultati.json", "w", encoding="utf-8") as f:
-    json.dump(output, f, indent=2)
+    json.dump(risultati, f, indent=2)
 
-print("🔥 Motore 3 migliorato (ritardatari intelligenti)")
+print("🔥 Motore 3 PRO creato")
