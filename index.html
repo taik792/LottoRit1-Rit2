@@ -3,14 +3,52 @@ fetch("risultati.json")
 .then(res => res.json())
 .then(data => {
 
-  // ===== TOP GIOCATE =====
+  console.log("DATI:", data); // DEBUG
+
+  // ===== TOP =====
   const topDiv = document.getElementById("top");
-  topDiv.innerHTML = "";
+  if (topDiv) {
+    topDiv.innerHTML = "";
 
-  if (data.top && data.top.length > 0) {
-    data.top.forEach(g => {
+    if (data.top) {
+      data.top.forEach(g => {
+        const el = document.createElement("div");
+        el.innerHTML = `${g.ruota} → ${g.ambo?.join(" - ") || ""}`;
+        topDiv.appendChild(el);
+      });
+    }
+  }
+
+  // ===== JOLLY =====
+  const jollyDiv = document.getElementById("jolly");
+  if (jollyDiv && data.jolly && data.jolly.ambo) {
+    jollyDiv.innerHTML = `
+      ${data.jolly.ruota} → ${data.jolly.ambo.join(" - ")}
+    `;
+  }
+
+  // ===== RUOTE =====
+  const container = document.getElementById("giocate");
+  if (container && data.ruote) {
+    container.innerHTML = "";
+
+    Object.keys(data.ruote).forEach(ruota => {
+      const r = data.ruote[ruota];
+
+      if (!r || !r.ambo) return;
+
       const el = document.createElement("div");
-      el.className = "card top";
-
       el.innerHTML = `
-        <b
+        ${ruota} → ${r.ambo.join(" - ")}
+      `;
+
+      container.appendChild(el);
+    });
+  }
+
+})
+.catch(err => {
+  document.body.innerHTML = "<h2 style='color:red'>Errore caricamento dati</h2>";
+  console.error(err);
+});
+</script>
