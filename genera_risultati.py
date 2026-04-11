@@ -1,85 +1,54 @@
 import json
 from collections import Counter
 
-RUOTE = [
-    "Bari","Cagliari","Firenze","Genova","Milano",
-    "Napoli","Palermo","Roma","Torino","Venezia"
-]
+RUOTE = ["Bari","Cagliari","Firenze","Genova","Milano",
+         "Napoli","Palermo","Roma","Torino","Venezia"]
 
 with open("estrazioni.json", encoding="utf-8") as f:
     data = json.load(f)
 
-def ritardi(estrazioni):
-    rit = {n: 0 for n in range(1, 91)}
-    for estr in reversed(estrazioni):
-        for n in range(1, 91):
-            if n not in estr:
-                rit[n] += 1
-            else:
-                rit[n] = 0
-    return rit
+output = {
+    "top": [],
+    "ruota": {},
+    "jolly": {}
+}
 
-def frequenti(estrazioni):
-    numeri = []
-    for estr in estrazioni[-20:]:
-        numeri.extend(estr)
-    return [n for n, _ in Counter(numeri).most_common(10)]
-
-output = {}
-top = []
-
+# ===== CALCOLO PER RUOTA =====
 for ruota in RUOTE:
-    estr = data.get(ruota, [])
+    estrazioni = data[ruota][-50:]  # ultime 50 estrazioni
 
-    if len(estr) < 5:
+    freq = Counter()
+    for estr in estrazioni:
+        freq.update(estr)
+
+    # numeri meno usciti = più "in ritardo soft"
+    numeri = sorted(freq, key=freq.get)[:5]
+
+    if len(numeri) >= 2:
+        ambo = [numeri[0], numeri[1]]
+    else:
         continue
 
-    r = ritardi(estr)
-    f = frequenti(estr)
+    output["ruota"][ruota] = ambo
 
-    R1 = max(r, key=r.get)
+# ===== TOP (migliori 3) =====
+sorted_ruote = list(output["ruota"].items())[:3]
 
-    C1 = None
-    for n in f:
-        if n != R1:
-            C1 = n
-            break
-
-    if not C1:
-        continue
-
-    ambo = sorted([R1, C1])
-    score = r[R1]
-
-    output[ruota] = {
-        "ambo": ambo,
-        "score": score
-    }
-
-    top.append({
-        "ruota": ruota,
-        "ambo": ambo,
-        "score": score
+for r, ambo in sorted_ruote:
+    output["top"].append({
+        "ruota": r,
+        "ambo": ambo
     })
 
-top = sorted(top, key=lambda x: x["score"], reverse=True)[:3]
-
-def next_ruota(r):
-    i = RUOTE.index(r)
-    return RUOTE[(i + 1) % len(RUOTE)]
-
-jolly = {}
-if top:
-    jolly = {
-        "ruota": next_ruota(top[0]["ruota"]),
-        "ambo": top[0]["ambo"]
+# ===== JOLLY =====
+if output["top"]:
+    output["jolly"] = {
+        "ruota": output["top"][0]["ruota"],
+        "ambo": output["top"][0]["ambo"]
     }
 
+# ===== SALVA =====
 with open("risultati.json", "w", encoding="utf-8") as f:
-    json.dump({
-        "ruote": output,
-        "top": top,
-        "jolly": jolly
-    }, f, indent=2)
+    json.dump(output, f, indent=2)
 
-print("OK GENERATO")
+print("✅ Motore 3 OK")
