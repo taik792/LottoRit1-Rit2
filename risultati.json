@@ -1,74 +1,104 @@
 {
-  "ruota": {
-    "Bari": [
-      20,
-      5
-    ],
-    "Cagliari": [
-      55,
-      19
-    ],
-    "Firenze": [
-      16,
-      65
-    ],
-    "Genova": [
-      69,
-      52
-    ],
-    "Milano": [
-      50,
-      58
-    ],
-    "Napoli": [
-      37,
-      33
-    ],
-    "Palermo": [
-      52,
-      15
-    ],
-    "Roma": [
-      26,
-      64
-    ],
-    "Torino": [
-      18,
-      89
-    ],
-    "Venezia": [
-      83,
-      12
-    ]
+  "ruote": {
+    "Bari": {
+      "ambo": [
+        41,
+        67
+      ],
+      "score": 152
+    },
+    "Cagliari": {
+      "ambo": [
+        41,
+        26
+      ],
+      "score": 150
+    },
+    "Firenze": {
+      "ambo": [
+        47,
+        90
+      ],
+      "score": 166
+    },
+    "Genova": {
+      "ambo": [
+        66,
+        6
+      ],
+      "score": 106
+    },
+    "Milano": {
+      "ambo": [
+        85,
+        32
+      ],
+      "score": 138
+    },
+    "Napoli": {
+      "ambo": [
+        40,
+        1
+      ],
+      "score": 134
+    },
+    "Palermo": {
+      "ambo": [
+        46,
+        45
+      ],
+      "score": 174
+    },
+    "Roma": {
+      "ambo": [
+        17,
+        63
+      ],
+      "score": 126
+    },
+    "Torino": {
+      "ambo": [
+        65,
+        49
+      ],
+      "score": 130
+    },
+    "Venezia": {
+      "ambo": [
+        65,
+        32
+      ],
+      "score": 136
+    }
   },
   "top": [
     {
-      "ruota": "Bari",
+      "ruota": "Palermo",
       "ambo": [
-        20,
-        5
-      ]
-    },
-    {
-      "ruota": "Cagliari",
-      "ambo": [
-        55,
-        19
+        46,
+        45
       ]
     },
     {
       "ruota": "Firenze",
       "ambo": [
-        16,
-        65
+        47,
+        90
+      ]
+    },
+    {
+      "ruota": "Bari",
+      "ambo": [
+        41,
+        67
       ]
     }
   ],
   "jolly": {
-    "ruota": "Bari",
+    "ruota": "Palermo",
     "ambo": [
-      20,
-      5
+      46,
+      45
     ]
   }
 }
