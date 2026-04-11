@@ -1,107 +1,74 @@
 {
-  "ruote": {
-    "Bari": {
-      "ambo": [
-        21,
-        35
-      ],
-      "score": 94
-    },
-    "Cagliari": {
-      "ambo": [
-        40,
-        44
-      ],
-      "score": 88
-    },
-    "Firenze": {
-      "ambo": [
-        22,
-        49
-      ],
-      "score": 82
-    },
-    "Genova": {
-      "ambo": [
-        14,
-        19
-      ],
-      "score": 125
-    },
-    "Milano": {
-      "ambo": [
-        48,
-        64
-      ],
-      "score": 99
-    },
-    "Napoli": {
-      "ambo": [
-        21,
-        51
-      ],
-      "score": 74
-    },
-    "Palermo": {
-      "ambo": [
-        14,
-        33
-      ],
-      "score": 97
-    },
-    "Roma": {
-      "ambo": [
-        52,
-        54
-      ],
-      "score": 89
-    },
-    "Torino": {
-      "ambo": [
-        18,
-        21
-      ],
-      "score": 92
-    },
-    "Venezia": {
-      "ambo": [
-        36,
-        43
-      ],
-      "score": 100
-    }
+  "ruota": {
+    "Bari": [
+      16,
+      3
+    ],
+    "Cagliari": [
+      63,
+      81
+    ],
+    "Firenze": [
+      67,
+      64
+    ],
+    "Genova": [
+      10,
+      48
+    ],
+    "Milano": [
+      44,
+      88
+    ],
+    "Napoli": [
+      20,
+      32
+    ],
+    "Palermo": [
+      36,
+      6
+    ],
+    "Roma": [
+      13,
+      39
+    ],
+    "Torino": [
+      86,
+      23
+    ],
+    "Venezia": [
+      80,
+      38
+    ]
   },
   "top": [
     {
-      "ruota": "Genova",
+      "ruota": "Bari",
       "ambo": [
-        14,
-        19
-      ],
-      "score": 125
+        16,
+        3
+      ]
     },
     {
-      "ruota": "Venezia",
+      "ruota": "Cagliari",
       "ambo": [
-        36,
-        43
-      ],
-      "score": 100
+        63,
+        81
+      ]
     },
     {
-      "ruota": "Milano",
+      "ruota": "Firenze",
       "ambo": [
-        48,
+        67,
         64
-      ],
-      "score": 99
+      ]
     }
   ],
   "jolly": {
-    "ruota": "Milano",
+    "ruota": "Bari",
     "ambo": [
-      14,
-      19
+      16,
+      3
     ]
   }
 }
