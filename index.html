@@ -3,75 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Lotto Elite Pro</title>
 
 <style>
+
 body {
-  margin: 0;
-  font-family: Arial;
-  background: #06131f;
-  color: white;
-  text-align: center;
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#06121f;
+    color:white;
+    text-align:center;
 }
 
 /* ===== TITOLI ===== */
 h1 {
-  color: #00ffc3;
-  font-size: 20px;
-  margin: 10px 0;
+    color:#00ffc3;
+    margin:20px 0;
 }
 
-.title {
-  margin: 10px 0;
-  color: #ccc;
-  font-size: 14px;
+h2 {
+    margin-top:30px;
 }
 
-/* ===== GRIGLIA FORZATA ===== */
+/* ===== GRIGLIA ===== */
 .grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 8px;
-  padding: 0 8px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:12px;
+    padding:10px;
 }
 
 /* ===== CARD ===== */
 .card {
-  background: #0c2436;
-  border: 2px solid #00ffc3;
-  border-radius: 10px;
-  padding: 8px;
+    border:2px solid #00ffc3;
+    border-radius:12px;
+    padding:10px;
+    background:#0c1f33;
 }
 
-.top {
-  border: 2px solid gold;
-  background: #2a2500;
+/* ===== TOP CARD (EVIDENZIATE) ===== */
+.top-card {
+    border:2px solid gold;
+    box-shadow:0 0 10px gold;
+    background:#2a2200;
 }
 
-.jolly {
-  border: 2px solid red;
-  background: #3a0000;
+/* ===== TESTO ===== */
+.ruota {
+    font-size:14px;
+    opacity:0.8;
 }
 
-.card h3 {
-  font-size: 11px;
-  margin: 4px 0;
-  color: #aaa;
+.ambo {
+    font-size:20px;
+    color:#00ffc3;
+    font-weight:bold;
 }
 
-.numbers {
-  font-size: 16px;
-  color: #00ffc3;
+/* ===== TOP ===== */
+.top-container {
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:12px;
+    padding:10px;
 }
 
-.small {
-  font-size: 13px;
-  color: #ccc;
+.top-box {
+    border:2px solid gold;
+    border-radius:12px;
+    padding:10px;
+    background:#2a2200;
+    color:#00ffc3;
 }
 
-.section {
-  margin-bottom: 15px;
+/* ===== JOLLY ===== */
+.jolly-box {
+    margin:20px;
+    padding:15px;
+    border:2px solid red;
+    border-radius:12px;
+    background:#330000;
+    color:#00ffc3;
+    font-size:20px;
 }
+
+/* ===== ESTRAZIONE ===== */
+.estrazione {
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:12px;
+    padding:10px;
+}
+
+.estrazione-card {
+    border:2px solid #00ffc3;
+    border-radius:12px;
+    padding:10px;
+    background:#0c1f33;
+    font-size:14px;
+}
+
 </style>
 </head>
 
@@ -79,122 +111,91 @@ h1 {
 
 <h1>🔥 LOTTO ELITE PRO</h1>
 
-<!-- ESTRAZIONE -->
-<div class="section">
-  <div class="title">🧾 ULTIMA ESTRAZIONE</div>
-  <div id="estrazione" class="grid"></div>
-</div>
+<h2>🧾 ULTIMA ESTRAZIONE</h2>
+<div id="estrazione" class="estrazione"></div>
 
-<!-- TOP -->
-<div class="section">
-  <div class="title">🎯 TOP</div>
-  <div id="top" class="grid"></div>
-</div>
+<h2>🎯 TOP</h2>
+<div id="top" class="top-container"></div>
 
-<!-- JOLLY -->
-<div class="section">
-  <div class="title">💣 JOLLY</div>
-  <div id="jolly"></div>
-</div>
+<h2>💣 JOLLY</h2>
+<div id="jolly"></div>
 
-<!-- RUOTE -->
-<div class="section">
-  <div class="title">📊 RUOTE</div>
-  <div id="ruote" class="grid"></div>
-</div>
+<h2>📊 RUOTE</h2>
+<div id="ruote" class="grid"></div>
 
 <script>
 
-// 🔥 anti-cache
-const url = "risultati.json?v=" + new Date().getTime();
-const urlEstr = "estrazioni.json?v=" + new Date().getTime();
-
-// ===== RISULTATI =====
-fetch(url)
+fetch("risultati.json")
 .then(res => res.json())
 .then(data => {
 
-  // TOP
-  const topDiv = document.getElementById("top");
-  topDiv.innerHTML = "";
+    const ruoteDiv = document.getElementById("ruote");
+    const topDiv = document.getElementById("top");
+    const estrDiv = document.getElementById("estrazione");
 
-  if (data.top) {
-    data.top.forEach(t => {
-      const div = document.createElement("div");
-      div.className = "card top";
-      div.innerHTML = `
-        <h3>${t.ruota}</h3>
-        <div class="numbers">${t.ambo.join(" - ")}</div>
-      `;
-      topDiv.appendChild(div);
+    const topRuote = data.top.map(t => t.ruota);
+
+    // ===== RUOTE =====
+    Object.keys(data.ruote).forEach(ruota => {
+
+        const dati = data.ruote[ruota];
+        const isTop = topRuote.includes(ruota);
+
+        const div = document.createElement("div");
+        div.className = "card " + (isTop ? "top-card" : "");
+
+        div.innerHTML = `
+            <div class="ruota">${ruota}</div>
+            <div class="ambo">${dati.ambo.join(" - ")}</div>
+        `;
+
+        ruoteDiv.appendChild(div);
     });
-  }
 
-  // JOLLY
-  const jollyDiv = document.getElementById("jolly");
-  jollyDiv.innerHTML = "";
+    // ===== TOP =====
+    data.top.forEach(t => {
+        const el = document.createElement("div");
+        el.className = "top-box";
+        el.innerHTML = `
+            <div>${t.ruota}</div>
+            <strong>${t.ambo.join(" - ")}</strong>
+        `;
+        topDiv.appendChild(el);
+    });
 
-  if (data.jolly && data.jolly.ambo) {
-    const div = document.createElement("div");
-    div.className = "card jolly";
-    div.innerHTML = `
-      <h3>${data.jolly.ruota}</h3>
-      <div class="numbers">${data.jolly.ambo.join(" - ")}</div>
-    `;
-    jollyDiv.appendChild(div);
-  }
-
-  // RUOTE
-  const ruoteDiv = document.getElementById("ruote");
-  ruoteDiv.innerHTML = "";
-
-  Object.keys(data.ruote).forEach(ruota => {
-
-    const r = data.ruote[ruota];
-    if (!r || !r.ambo) return;
-
-    const div = document.createElement("div");
-    div.className = "card";
-
-    div.innerHTML = `
-      <h3>${ruota}</h3>
-      <div class="numbers">${r.ambo.join(" - ")}</div>
+    // ===== JOLLY =====
+    const j = data.jolly;
+    document.getElementById("jolly").innerHTML = `
+        <div class="jolly-box">
+            ${j.ruota}<br>
+            <strong>${j.ambo.join(" - ")}</strong>
+        </div>
     `;
 
-    ruoteDiv.appendChild(div);
-  });
+    // ===== ESTRAZIONE =====
+    fetch("estrazioni.json")
+    .then(res => res.json())
+    .then(estrazioni => {
+
+        Object.keys(estrazioni).forEach(ruota => {
+
+            const lista = estrazioni[ruota];
+            const ultima = lista[lista.length - 1];
+
+            const el = document.createElement("div");
+            el.className = "estrazione-card";
+
+            el.innerHTML = `
+                <div>${ruota}</div>
+                <strong>${ultima.join(" - ")}</strong>
+            `;
+
+            estrDiv.appendChild(el);
+        });
+
+    });
 
 });
-
-
-// ===== ESTRAZIONI =====
-fetch(urlEstr)
-.then(res => res.json())
-.then(data => {
-
-  const estrDiv = document.getElementById("estrazione");
-  estrDiv.innerHTML = "";
-
-  Object.keys(data).forEach(ruota => {
-
-    const lista = data[ruota];
-    if (!lista || lista.length === 0) return;
-
-    const ultima = lista[lista.length - 1];
-
-    const div = document.createElement("div");
-    div.className = "card";
-
-    div.innerHTML = `
-      <h3>${ruota}</h3>
-      <div class="numbers small">${ultima.join(" - ")}</div>
-    `;
-
-    estrDiv.appendChild(div);
-  });
-
-})
-.catch(err => console.log("Errore estrazioni:", err));
 
 </script>
 
