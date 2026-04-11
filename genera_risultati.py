@@ -1,8 +1,20 @@
 import json
-from collections import Counter
 
 RUOTE = ["Bari","Cagliari","Firenze","Genova","Milano",
          "Napoli","Palermo","Roma","Torino","Venezia"]
+
+def calcola_ritardi(estrazioni):
+    ritardi = {n: 0 for n in range(1, 91)}
+
+    for estr in reversed(estrazioni):
+        usciti = set(estr)
+        for n in ritardi:
+            if n in usciti:
+                ritardi[n] = 0
+            else:
+                ritardi[n] += 1
+
+    return ritardi
 
 with open("estrazioni.json", encoding="utf-8") as f:
     data = json.load(f)
@@ -14,38 +26,24 @@ output = {
 }
 
 for ruota in RUOTE:
-    estrazioni = data[ruota][-80:]
+    estrazioni = data[ruota][-120:]  # più storico = meglio
 
-    freq = Counter()
-    last_seen = {}
+    ritardi = calcola_ritardi(estrazioni)
 
-    # ===== ANALISI =====
-    for idx, estr in enumerate(estrazioni[::-1]):  # dalla più recente
-        for n in estr:
-            freq[n] += 1
-            if n not in last_seen:
-                last_seen[n] = idx
+    # top 6 ritardatari
+    top = sorted(ritardi, key=ritardi.get, reverse=True)[:6]
 
-    punteggi = {}
+    # combinazioni intelligenti
+    coppie = [
+        (top[0], top[2]),
+        (top[1], top[3]),
+        (top[0], top[4])
+    ]
 
-    for n in range(1, 91):
-        ritardo = last_seen.get(n, 80)  # se mai uscito
-        frequenza = freq.get(n, 0)
+    # scegli quella con ritardo totale più alto
+    best = max(coppie, key=lambda x: ritardi[x[0]] + ritardi[x[1]])
 
-        # ===== SCORE INTELLIGENTE =====
-        score = (ritardo * 1.5) + (10 - frequenza)
-
-        # filtro anti schifezze
-        if frequenza == 0:
-            score -= 20  # troppo morto
-
-        punteggi[n] = score
-
-    # prendi migliori
-    migliori = sorted(punteggi, key=punteggi.get, reverse=True)[:5]
-
-    if len(migliori) >= 2:
-        output["ruota"][ruota] = [migliori[0], migliori[1]]
+    output["ruota"][ruota] = list(best)
 
 # ===== TOP =====
 top_ruote = list(output["ruota"].items())[:3]
@@ -64,4 +62,4 @@ if output["top"]:
 with open("risultati.json", "w", encoding="utf-8") as f:
     json.dump(output, f, indent=2)
 
-print("🔥 Motore 3 PRO pronto")
+print("🔥 Motore 3 migliorato (ritardatari intelligenti)")
