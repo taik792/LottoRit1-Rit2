@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Lotto Elite Pro Motore3</title>
+<title>Lotto Elite Pro</title>
 
 <style>
 body {
@@ -43,15 +43,15 @@ h1 {
 
 <body>
 
-<h1>🔥 LOTTO ELITE PRO Motore3</h1>
+<h1>🔥 LOTTO ELITE PRO</h1>
 
-<h2>🎯 Giocate Consigliate</h2>
+<h2>🎯 TOP</h2>
 <div id="top" class="container"></div>
 
-<h2>💣 Jolly</h2>
+<h2>💣 JOLLY</h2>
 <div id="jolly" class="container"></div>
 
-<h2>📊 Tutte le ruote</h2>
+<h2>📊 RUOTE</h2>
 <div id="giocate" class="container"></div>
 
 <script>
@@ -63,26 +63,41 @@ fetch("risultati.json")
 
   // ===== TOP =====
   const topDiv = document.getElementById("top");
-  if (data.top) {
+  topDiv.innerHTML = "";
+
+  if (data.top && data.top.length) {
     data.top.forEach(g => {
       const el = document.createElement("div");
       el.className = "card top";
-      el.innerHTML = `<b>${g.ruota}</b><br>${g.ambo.join(" - ")}`;
+
+      el.innerHTML = `
+        <b>${g.ruota || "?"}</b><br>
+        ${g.ambo ? g.ambo.join(" - ") : "N/A"}
+      `;
+
       topDiv.appendChild(el);
     });
   }
 
   // ===== JOLLY =====
   const jollyDiv = document.getElementById("jolly");
+  jollyDiv.innerHTML = "";
+
   if (data.jolly && data.jolly.ambo) {
     const el = document.createElement("div");
     el.className = "card jolly";
-    el.innerHTML = `<b>${data.jolly.ruota}</b><br>${data.jolly.ambo.join(" - ")}`;
+
+    el.innerHTML = `
+      <b>${data.jolly.ruota}</b><br>
+      ${data.jolly.ambo.join(" - ")}
+    `;
+
     jollyDiv.appendChild(el);
   }
 
   // ===== RUOTE =====
   const container = document.getElementById("giocate");
+  container.innerHTML = "";
 
   if (data.ruote) {
     Object.keys(data.ruote).forEach(ruota => {
@@ -93,8 +108,7 @@ fetch("risultati.json")
 
       el.innerHTML = `
         <b>${ruota}</b><br>
-        ${r.ambo.join(" - ")}<br>
-        <small>Score: ${r.score || 0}</small>
+        ${r && r.ambo ? r.ambo.join(" - ") : "N/A"}
       `;
 
       container.appendChild(el);
@@ -103,8 +117,8 @@ fetch("risultati.json")
 
 })
 .catch(err => {
-  document.body.innerHTML = "<h2 style='color:red'>Errore caricamento dati</h2>";
   console.error(err);
+  document.body.innerHTML = "<h2 style='color:red'>Errore caricamento dati</h2>";
 });
 </script>
 
