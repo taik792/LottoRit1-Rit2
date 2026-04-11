@@ -1,78 +1,105 @@
 import json
 from collections import Counter
 
-RUOTE = ["Bari","Cagliari","Firenze","Genova","Milano",
-         "Napoli","Palermo","Roma","Torino","Venezia"]
+RUOTE = [
+    "Bari","Cagliari","Firenze","Genova","Milano",
+    "Napoli","Palermo","Roma","Torino","Venezia"
+]
 
-# ===== CARICA DATI =====
+# ===== CARICA ESTRAZIONI =====
 with open("estrazioni.json", encoding="utf-8") as f:
     data = json.load(f)
 
-def ritardi(estrazioni):
-    rit = {n: 0 for n in range(1, 91)}
+# ===== CALCOLO RITARDI =====
+def calcola_ritardi(estrazioni):
+    ritardi = {n: 0 for n in range(1, 91)}
+
     for estr in reversed(estrazioni):
         for n in range(1, 91):
             if n not in estr:
-                rit[n] += 1
+                ritardi[n] += 1
             else:
-                rit[n] = 0
-    return rit
+                ritardi[n] = 0
 
-def numeri_frequenti_recenti(estrazioni, n=20):
-    recenti = estrazioni[-n:]
-    tutti = []
+    return ritardi
+
+# ===== NUMERI FREQUENTI RECENTI =====
+def numeri_frequenti(estrazioni, ultimi=20):
+    recenti = estrazioni[-ultimi:]
+    numeri = []
+
     for estr in recenti:
-        tutti.extend(estr)
-    count = Counter(tutti)
-    return [num for num, _ in count.most_common(10)]
+        numeri.extend(estr)
 
+    conteggio = Counter(numeri)
+
+    return [n for n, _ in conteggio.most_common(15)]
+
+# ===== GENERAZIONE =====
 output = {}
-giocate_top = []
+top_list = []
 
 for ruota in RUOTE:
-    estrazioni = data[ruota]
+    estrazioni = data.get(ruota, [])
 
-    rit = ritardi(estrazioni)
-    top_rit = sorted(rit.items(), key=lambda x: x[1], reverse=True)
+    if len(estrazioni) < 10:
+        continue
 
-    R1 = top_rit[0][0]
+    ritardi = calcola_ritardi(estrazioni)
 
-    frequenti = numeri_frequenti_recenti(estrazioni)
+    # numero più ritardatario
+    R1 = max(ritardi, key=ritardi.get)
 
-    # scegli numero compatibile diverso da R1
+    # numeri frequenti
+    freq = numeri_frequenti(estrazioni)
+
+    # scegli il migliore compatibile
     C1 = None
-    for n in frequenti:
+    for n in freq:
         if n != R1:
             C1 = n
             break
 
+    if not C1:
+        continue
+
     ambo = sorted([R1, C1])
 
+    # score semplice
+    score = ritardi[R1] + freq.index(C1)
+
     output[ruota] = {
-        "ambo": ambo
+        "ambo": ambo,
+        "score": score
     }
 
-    giocate_top.append((ruota, ambo))
+    top_list.append({
+        "ruota": ruota,
+        "ambo": ambo,
+        "score": score
+    })
 
-# ===== TOP 3 GIOCATE =====
-giocate_top = giocate_top[:3]
+# ===== ORDINA TOP =====
+top_list = sorted(top_list, key=lambda x: x["score"], reverse=True)[:3]
 
-# ===== JOLLY = RUOTA SUCCESSIVA =====
-def ruota_jolly(ruota):
-    idx = RUOTE.index(ruota)
+# ===== JOLLY =====
+def ruota_successiva(r):
+    idx = RUOTE.index(r)
     return RUOTE[(idx + 1) % len(RUOTE)]
 
 jolly = {
-    "ruota": ruota_jolly(giocate_top[0][0]),
-    "ambo": giocate_top[0][1]
-}
+    "ruota": ruota_successiva(top_list[0]["ruota"]),
+    "ambo": top_list[0]["ambo"]
+} if top_list else {}
 
 # ===== SALVA =====
-with open("risultati.json", "w", encoding="utf-8") as f:
-    json.dump({
-        "ruote": output,
-        "top": giocate_top,
-        "jolly": jolly
-    }, f, indent=2)
+risultato = {
+    "ruote": output,
+    "top": top_list,
+    "jolly": jolly
+}
 
-print("🔥 Motore 3 generato")
+with open("risultati.json", "w", encoding="utf-8") as f:
+    json.dump(risultato, f, indent=2)
+
+print("🔥 Generazione completata (Motore 3)")
