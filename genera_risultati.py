@@ -43,6 +43,9 @@ def calcola_ritardi(estrazioni):
                 break
     return ritardi
 
+def distanza_ok(n1, n2):
+    return abs(n1 - n2) <= 60  # evita ambi troppo distanti
+
 # ===== CALCOLO =====
 for ruota, estrazioni_ruota in estrazioni.items():
 
@@ -58,11 +61,12 @@ for ruota, estrazioni_ruota in estrazioni.items():
         f = freq[n]
         r = ritardi[n]
 
-        # ❌ penalizza numeri appena usciti
-        penalty = -15 if n in ultima_estrazione else 0
+        # 🔥 formula equilibrata
+        score = (f * 2.2) + (r * 0.4)
 
-        # 🔥 formula MOTORE 4
-        score = (f * 1.5) + (r * 0.8) + penalty
+        # penalità leggera
+        if n in ultima_estrazione:
+            score -= 5
 
         score_numeri[n] = score
 
@@ -78,8 +82,10 @@ for ruota, estrazioni_ruota in estrazioni.items():
             n1 = top_numeri[i]
             n2 = top_numeri[j]
 
-            score = score_numeri[n1] + score_numeri[n2]
+            if not distanza_ok(n1, n2):
+                continue
 
+            score = score_numeri[n1] + score_numeri[n2]
             migliori_ambi.append(((n1, n2), score))
 
     migliori_ambi.sort(key=lambda x: x[1], reverse=True)
@@ -101,7 +107,7 @@ top = sorted(
 
 risultati["top"] = [r[0] for r in top]
 
-# ===== JOLLY PRO AVANZATO =====
+# ===== JOLLY PRO =====
 jolly_ruota = random.choice(risultati["top"])
 ambo_top = risultati["ruote"][jolly_ruota]["ambo"]
 
@@ -117,7 +123,7 @@ if usa_gemella:
     score_numeri = {}
 
     for n in range(1,91):
-        score_numeri[n] = (freq[n]*1.4) + (ritardi[n]*1)
+        score_numeri[n] = (freq[n]*2) + (ritardi[n]*0.5)
 
     ordinati = sorted(score_numeri.items(), key=lambda x: x[1], reverse=True)
 
@@ -138,7 +144,7 @@ else:
     score_numeri = {}
 
     for n in range(1,91):
-        score_numeri[n] = (freq[n]*1.4) + (ritardi[n]*1)
+        score_numeri[n] = (freq[n]*2) + (ritardi[n]*0.5)
 
     ordinati = sorted(score_numeri.items(), key=lambda x: x[1], reverse=True)
 
@@ -155,4 +161,4 @@ else:
 with open("risultati.json", "w") as f:
     json.dump(risultati, f, indent=2)
 
-print("🔥 MOTORE 4 ATTIVO - RISULTATI GENERATI")
+print("🔥 MOTORE 4 DEFINITIVO ATTIVO")
