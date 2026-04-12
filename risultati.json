@@ -2,103 +2,103 @@
   "ruote": {
     "Bari": {
       "ambo": [
-        66,
-        73
+        67,
+        10
       ],
-      "score": 271.5
+      "score": 273.5
     },
     "Cagliari": {
       "ambo": [
-        72,
-        41
+        34,
+        26
       ],
-      "score": 280.0
+      "score": 231.5
     },
     "Firenze": {
       "ambo": [
-        90,
-        47
+        47,
+        19
       ],
-      "score": 280.0
+      "score": 287.5
     },
     "Genova": {
       "ambo": [
-        25,
-        6
+        8,
+        66
       ],
-      "score": 231.0
+      "score": 249.0
     },
     "Milano": {
       "ambo": [
-        34,
-        77
+        44,
+        47
       ],
-      "score": 280.0
+      "score": 246.5
     },
     "Napoli": {
       "ambo": [
-        40,
-        32
+        8,
+        40
       ],
-      "score": 259.0
+      "score": 249.0
     },
     "Palermo": {
       "ambo": [
-        45,
-        90
+        90,
+        6
       ],
-      "score": 279.5
+      "score": 252.0
     },
     "Roma": {
       "ambo": [
-        34,
-        37
+        17,
+        40
       ],
-      "score": 267.0
+      "score": 275.5
     },
     "Torino": {
       "ambo": [
-        65,
-        11
+        86,
+        68
       ],
-      "score": 241.0
+      "score": 255.0
     },
     "Venezia": {
       "ambo": [
-        79,
-        35
+        17,
+        3
       ],
-      "score": 254.5
+      "score": 260.5
     }
   },
   "top": [
     {
-      "ruota": "Cagliari",
-      "ambo": [
-        72,
-        41
-      ]
-    },
-    {
       "ruota": "Firenze",
       "ambo": [
-        90,
-        47
+        47,
+        19
       ]
     },
     {
-      "ruota": "Milano",
+      "ruota": "Roma",
       "ambo": [
-        34,
-        77
+        17,
+        40
+      ]
+    },
+    {
+      "ruota": "Bari",
+      "ambo": [
+        67,
+        10
       ]
     }
   ],
   "jolly": {
     "ruota": "Firenze",
     "ambo": [
-      90,
-      47
+      47,
+      49
     ]
   }
 }
