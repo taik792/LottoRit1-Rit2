@@ -2,85 +2,85 @@
   "ruote": {
     "Bari": {
       "ambo": [
-        41,
-        67
+        73,
+        41
       ],
-      "score": 150.9
+      "score": 88.6
     },
     "Cagliari": {
       "ambo": [
-        41,
-        26
+        20,
+        41
       ],
-      "score": 137.0
+      "score": 85.8
     },
     "Firenze": {
       "ambo": [
-        47,
-        90
+        90,
+        47
       ],
-      "score": 153.0
+      "score": 85.2
     },
     "Genova": {
       "ambo": [
-        66,
-        23
+        23,
+        66
       ],
-      "score": 110.9
+      "score": 83.0
     },
     "Milano": {
       "ambo": [
-        85,
-        34
+        34,
+        85
       ],
-      "score": 134.9
+      "score": 83.4
     },
     "Napoli": {
       "ambo": [
         40,
         1
       ],
-      "score": 134.7
+      "score": 74.6
     },
     "Palermo": {
       "ambo": [
         45,
         46
       ],
-      "score": 145.8
+      "score": 81.6
     },
     "Roma": {
       "ambo": [
         17,
         7
       ],
-      "score": 120.3
+      "score": 79.0
     },
     "Torino": {
       "ambo": [
-        65,
-        49
+        59,
+        65
       ],
-      "score": 120.0
+      "score": 81.2
     },
     "Venezia": {
       "ambo": [
         32,
         79
       ],
-      "score": 121.6
+      "score": 72.4
     }
   },
   "top": [
-    "Firenze",
     "Bari",
-    "Palermo"
+    "Cagliari",
+    "Firenze"
   ],
   "jolly": {
-    "ruota": "Bari",
+    "ruota": "Firenze",
     "ambo": [
-      3,
-      59
+      64,
+      33
     ]
   }
 }
