@@ -61,17 +61,32 @@ for ruota in RUOTE:
             range_score
         )
 
+    # ===== BONUS AMBO =====
+    def bonus_ambo(n1, n2):
+        diff = abs(n1 - n2)
+
+        if diff <= 2:
+            return -10
+        if 5 <= diff <= 30:
+            return 10
+        if diff > 60:
+            return -5
+
+        return 0
+
     ordinati = sorted(score_numeri.items(), key=lambda x: x[1], reverse=True)
 
     ultima = estrazioni[ruota][-1]
+    ultime_due = estrazioni[ruota][-2:]
+    numeri_recenti = set(n for estr in ultime_due for n in estr)
 
-    # ===== POOL DINAMICO (ANTI FISSO) =====
+    # ===== POOL DINAMICO =====
     top_pool = ordinati[:40]
     random.shuffle(top_pool)
 
     candidati = []
     for n,score in top_pool:
-        if n not in ultima and score > 10:
+        if n not in ultima and n not in numeri_recenti and score > 10:
             candidati.append(n)
 
     if len(candidati) < 10:
@@ -80,7 +95,7 @@ for ruota in RUOTE:
     best_ambo = None
     best_score = -1
 
-    # ===== SCELTA RANDOM INTELLIGENTE =====
+    # ===== SCELTA AMBO =====
     for _ in range(80):
 
         n1, n2 = random.sample(candidati, 2)
@@ -88,12 +103,15 @@ for ruota in RUOTE:
         if abs(n1 - n2) <= 2:
             continue
 
-        # anti ripetizione globale (ma non troppo rigido)
         if n1 in global_usati or n2 in global_usati:
             if random.random() < 0.7:
                 continue
 
-        score = score_numeri[n1] + score_numeri[n2]
+        score = (
+            score_numeri[n1] +
+            score_numeri[n2] +
+            bonus_ambo(n1, n2)
+        )
 
         if score > best_score:
             best_score = score
@@ -116,15 +134,36 @@ for nome, dati in top:
     })
     global_usati.update(dati["ambo"])
 
-# ===== JOLLY =====
-jolly_ruota = random.choice(top)[0]  # non sempre il primo!
+# ===== JOLLY INTELLIGENTE =====
+jolly_ruota = random.choice(top)[0]
+
+numeri_base = risultati["ruote"][jolly_ruota]["ambo"]
+
+# prendi un numero alternativo forte
+storico = estrazioni[jolly_ruota][-60:]
+frequenze = defaultdict(int)
+
+for estr in storico:
+    for n in estr:
+        frequenze[n] += 1
+
+ordinati = sorted(frequenze.items(), key=lambda x: x[1], reverse=True)
+
+extra = None
+for n,_ in ordinati:
+    if n not in numeri_base:
+        extra = n
+        break
+
+jolly_ambo = [numeri_base[0], extra]
+
 risultati["jolly"] = {
     "ruota": jolly_ruota,
-    "ambo": risultati["ruote"][jolly_ruota]["ambo"]
+    "ambo": jolly_ambo
 }
 
 # ===== SALVA =====
 with open("risultati.json","w",encoding="utf-8") as f:
     json.dump(risultati,f,indent=2)
 
-print("🔥 MOTORE 3 PRO ATTIVO (ANTI-FISSO)")
+print("🔥 MOTORE 3 PRO DEFINITIVO ATTIVO")
