@@ -77,10 +77,10 @@
     "Firenze"
   ],
   "jolly": {
-    "ruota": "Genova (gemella)",
+    "ruota": "Roma (gemella)",
     "ambo": [
-      6,
-      4
+      40,
+      13
     ]
   }
 }
