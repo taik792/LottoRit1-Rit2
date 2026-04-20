@@ -77,10 +77,10 @@
     "Palermo"
   ],
   "jolly": {
-    "ruota": "Firenze",
+    "ruota": "Palermo",
     "ambo": [
-      71,
-      28
+      30,
+      36
     ]
   }
 }
