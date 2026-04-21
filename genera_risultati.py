@@ -1,8 +1,11 @@
-# genera_risultati.py
-# VERSIONE CORRETTA — salva SOLO ambo calcolato (non i 5 numeri estratti)
-
 import json
-from collections import Counter
+from itertools import combinations
+
+RUOTE_ORDINE = [
+    "Bari", "Cagliari", "Firenze",
+    "Genova", "Milano", "Napoli",
+    "Palermo", "Roma", "Torino", "Venezia"
+]
 
 
 def carica_estrazioni():
@@ -10,80 +13,96 @@ def carica_estrazioni():
         return json.load(f)
 
 
-def calcola_ambo(estrazione):
+def score_numero(n, estrazioni_ruota):
     """
-    Logica semplice e stabile:
-    prende i 2 numeri più forti dalla ruota
-    (qui esempio: primo + ultimo numero della cinquina)
+    Score semplice:
+    più il numero compare nello storico, più sale il punteggio
     """
-
-    if len(estrazione) < 5:
-        return [estrazione[0], estrzione[1]]
-
-    n1 = estrazione[0]
-    n2 = estrazione[4]
-
-    if n1 == n2:
-        n2 = estrazione[1]
-
-    return sorted([n1, n2])
-
-
-def calcola_score(ambo, storico_ruota):
-    """
-    Score migliorato:
-    più il numero ricorre nello storico → più sale
-    """
-
     score = 0
 
-    for estrazione in storico_ruota[-50:]:
-        for numero in ambo:
-            if numero in estrazione:
-                score += 25
-
-        if all(n in estrazione for n in ambo):
-            score += 100
+    for estrazione in estrazioni_ruota:
+        if n in estrazione:
+            score += 25
 
     return score
 
 
-def genera():
-    dati = carica_estrazioni()
+def trova_ambo_forte(nome_ruota, estrazioni_ruota):
+    """
+    Regole:
+    - usa l'ultima estrazione disponibile
+    - NON può scegliere numeri presenti nell'ultima estrazione
+    - sceglie l'ambo con score più alto
+    """
 
-    risultati = []
+    if not estrazioni_ruota:
+        return None
 
-    for ruota, storico in dati.items():
+    ultima_estrazione = estrazioni_ruota[-1]
 
-        if not storico:
+    # numeri disponibili 1-90 ESCLUSI quelli appena usciti
+    candidati = [
+        n for n in range(1, 91)
+        if n not in ultima_estrazione
+    ]
+
+    miglior_ambo = None
+    miglior_score = -1
+
+    for n1, n2 in combinations(candidati, 2):
+
+        # doppia sicurezza: mai numeri già usciti
+        if n1 in ultima_estrazione or n2 in ultima_estrazione:
             continue
 
-        ultima_estrazione = storico[-1]
+        score = (
+            score_numero(n1, estrazioni_ruota)
+            + score_numero(n2, estrazioni_ruota)
+        )
 
-        ambo = calcola_ambo(ultima_estrazione)
+        if score > miglior_score:
+            miglior_score = score
+            miglior_ambo = [n1, n2]
 
-        score = calcola_score(ambo, storico)
+    return {
+        "ruota": nome_ruota,
+        "numeri": miglior_ambo,
+        "score": miglior_score,
+        "ultima_estrazione": ultima_estrazione
+    }
 
-        risultati.append({
-            "ruota": ruota,
-            "numeri": ambo,  # SOLO 2 NUMERI
-            "score": score,
-            "ultima_estrazione": ultima_estrazione
-        })
 
-    risultati.sort(key=lambda x: x["score"], reverse=True)
+def genera_risultati():
+    dati = carica_estrazioni()
 
-    top = risultati[:3]
+    risultati_ruote = []
 
-    jolly = top[0] if top else {}
+    for ruota in RUOTE_ORDINE:
+        if ruota not in dati:
+            continue
+
+        risultato = trova_ambo_forte(
+            ruota,
+            dati[ruota]
+        )
+
+        if risultato:
+            risultati_ruote.append(risultato)
+
+    # ordina per score decrescente
+    risultati_ordinati = sorted(
+        risultati_ruote,
+        key=lambda x: x["score"],
+        reverse=True
+    )
+
+    top = risultati_ordinati[:3]
+    jolly = risultati_ordinati[:1]
 
     output = {
         "top": top,
-        "jolly": {
-            "ruota": jolly.get("ruota", ""),
-            "numeri": jolly.get("numeri", [])
-        },
-        "ambo_forte": risultati
+        "jolly": jolly,
+        "ambo_forte": risultati_ruote
     }
 
     with open("risultati.json", "w", encoding="utf-8") as f:
@@ -93,4 +112,4 @@ def genera():
 
 
 if __name__ == "__main__":
-    genera()
+    genera_risultati()
