@@ -2,9 +2,16 @@ import json
 from itertools import combinations
 
 RUOTE_ORDINE = [
-    "Bari", "Cagliari", "Firenze",
-    "Genova", "Milano", "Napoli",
-    "Palermo", "Roma", "Torino", "Venezia"
+    "Bari",
+    "Cagliari",
+    "Firenze",
+    "Genova",
+    "Milano",
+    "Napoli",
+    "Palermo",
+    "Roma",
+    "Torino",
+    "Venezia"
 ]
 
 
@@ -13,37 +20,55 @@ def carica_estrazioni():
         return json.load(f)
 
 
-def score_numero(n, estrazioni_ruota):
+def score_numero(numero, storico_ruota):
     """
-    Score semplice:
-    più il numero compare nello storico, più sale il punteggio
+    Score misto:
+    + frequenza storica
+    + ritardo utile
     """
-    score = 0
 
-    for estrazione in estrazioni_ruota:
-        if n in estrazione:
-            score += 25
+    frequenza = 0
+    ritardo = 0
+
+    # frequenza totale
+    for estrazione in storico_ruota:
+        if numero in estrazione:
+            frequenza += 1
+
+    # ritardo: quante estrazioni fa è uscito
+    trovato = False
+    for i, estrazione in enumerate(reversed(storico_ruota), start=1):
+        if numero in estrazione:
+            ritardo = i
+            trovato = True
+            break
+
+    if not trovato:
+        ritardo = len(storico_ruota)
+
+    # score finale
+    score = (frequenza * 20) + (ritardo * 5)
 
     return score
 
 
-def trova_ambo_forte(nome_ruota, estrazioni_ruota):
+def trova_ambo_forte(nome_ruota, storico_ruota):
     """
     Regole:
-    - usa l'ultima estrazione disponibile
-    - NON può scegliere numeri presenti nell'ultima estrazione
-    - sceglie l'ambo con score più alto
+    - esclude numeri ultima estrazione
+    - evita numeri troppo vicini
+    - evita consecutivi
+    - sceglie miglior score
     """
 
-    if not estrazioni_ruota:
+    if not storico_ruota:
         return None
 
-    ultima_estrazione = estrazioni_ruota[-1]
+    ultima_estrzione = storico_ruota[-1]
 
-    # numeri disponibili 1-90 ESCLUSI quelli appena usciti
     candidati = [
         n for n in range(1, 91)
-        if n not in ultima_estrazione
+        if n not in ultima_estrzione
     ]
 
     miglior_ambo = None
@@ -51,31 +76,38 @@ def trova_ambo_forte(nome_ruota, estrazioni_ruota):
 
     for n1, n2 in combinations(candidati, 2):
 
-        # doppia sicurezza: mai numeri già usciti
-        if n1 in ultima_estrazione or n2 in ultima_estrazione:
+        # sicurezza doppia
+        if n1 in ultima_estrzione or n2 in ultima_estrzione:
+            continue
+
+        # evita numeri consecutivi / troppo vicini
+        if abs(n1 - n2) < 8:
             continue
 
         score = (
-            score_numero(n1, estrazioni_ruota)
-            + score_numero(n2, estrazioni_ruota)
+            score_numero(n1, storico_ruota)
+            + score_numero(n2, storico_ruota)
         )
 
         if score > miglior_score:
             miglior_score = score
             miglior_ambo = [n1, n2]
 
+    if not miglior_ambo:
+        return None
+
     return {
         "ruota": nome_ruota,
         "numeri": miglior_ambo,
         "score": miglior_score,
-        "ultima_estrazione": ultima_estrazione
+        "ultima_estrazione": ultima_estrzione
     }
 
 
 def genera_risultati():
     dati = carica_estrazioni()
 
-    risultati_ruote = []
+    risultati = []
 
     for ruota in RUOTE_ORDINE:
         if ruota not in dati:
@@ -87,28 +119,27 @@ def genera_risultati():
         )
 
         if risultato:
-            risultati_ruote.append(risultato)
+            risultati.append(risultato)
 
-    # ordina per score decrescente
-    risultati_ordinati = sorted(
-        risultati_ruote,
+    # ordinamento TOP per score
+    top = sorted(
+        risultati,
         key=lambda x: x["score"],
         reverse=True
-    )
+    )[:3]
 
-    top = risultati_ordinati[:3]
-    jolly = risultati_ordinati[:1]
+    jolly = top[:1]
 
     output = {
         "top": top,
         "jolly": jolly,
-        "ambo_forte": risultati_ruote
+        "ambo_forte": risultati
     }
 
     with open("risultati.json", "w", encoding="utf-8") as f:
         json.dump(output, f, indent=2, ensure_ascii=False)
 
-    print("risultati.json aggiornato correttamente")
+    print("risultati.json generato correttamente")
 
 
 if __name__ == "__main__":
