@@ -199,52 +199,75 @@ fetch("risultati.json?v=" + new Date().getTime())
     const jollyDiv = document.getElementById("jolly");
     const amboDiv = document.getElementById("ambo-forte");
 
-    // TOP
+    const ordineRuote = [
+        "Bari",
+        "Cagliari",
+        "Firenze",
+        "Genova",
+        "Milano",
+        "Napoli",
+        "Palermo",
+        "Roma",
+        "Torino",
+        "Venezia"
+    ];
+
+    /* TOP - solo primi 3 per score */
     topDiv.innerHTML = "";
-    data.top.slice(0, 3).forEach(item => {
-        topDiv.innerHTML += `
-            <div class="top-card">
-                <div class="ruota">${item.ruota}</div>
+
+    data.top
+        .slice(0, 3)
+        .forEach(item => {
+            topDiv.innerHTML += `
+                <div class="top-card">
+                    <div class="ruota">${item.ruota}</div>
+                    <div class="numeri">
+                        ${item.numeri[0]} — ${item.numeri[1]}
+                    </div>
+                </div>
+            `;
+        });
+
+    /* JOLLY */
+    if (data.jolly && data.jolly.ruota) {
+        jollyDiv.innerHTML = `
+            <div class="jolly-card">
+                <div class="ruota">${data.jolly.ruota}</div>
                 <div class="numeri">
-                    ${item.numeri[0]} — ${item.numeri[1]}
+                    ${data.jolly.numeri[0]} — ${data.jolly.numeri[1]}
                 </div>
             </div>
         `;
-    });
+    }
 
-    // JOLLY
-    jollyDiv.innerHTML = `
-        <div class="jolly-card">
-            <div class="ruota">${data.jolly.ruota}</div>
-            <div class="numeri">
-                ${data.jolly.numeri[0]} — ${data.jolly.numeri[1]}
-            </div>
-        </div>
-    `;
-
-    // TUTTE LE RUOTE
+    /* RUOTE AMBO FORTE - ordine classico lotto */
     amboDiv.innerHTML = "";
-    data.ambo_forte.forEach(item => {
-        amboDiv.innerHTML += `
-            <div class="ruota-card">
-                <div class="ruota">${item.ruota}</div>
 
-                <div class="label">Ultima Estrazione</div>
-                <div class="estrazione">
-                    ${item.ultima_estrazione.join(" • ")}
-                </div>
+    data.ambo_forte
+        .sort((a, b) =>
+            ordineRuote.indexOf(a.ruota) - ordineRuote.indexOf(b.ruota)
+        )
+        .forEach(item => {
+            amboDiv.innerHTML += `
+                <div class="ruota-card">
+                    <div class="ruota">${item.ruota}</div>
 
-                <div class="label">Ambo Forte</div>
-                <div class="numeri">
-                    ${item.numeri[0]} — ${item.numeri[1]}
-                </div>
+                    <div class="label">Ultima Estrazione</div>
+                    <div class="estrazione">
+                        ${item.ultima_estrazione.join(" • ")}
+                    </div>
 
-                <div class="score">
-                    Score: ${item.score}
+                    <div class="label">Ambo Forte</div>
+                    <div class="numeri">
+                        ${item.numeri[0]} — ${item.numeri[1]}
+                    </div>
+
+                    <div class="score">
+                        Score: ${item.score}
+                    </div>
                 </div>
-            </div>
-        `;
-    });
+            `;
+        });
 
 })
 .catch(error => {
