@@ -1,164 +1,177 @@
 import json
-import random
-from collections import defaultdict
+from collections import Counter
+from itertools import combinations
 
-# ===== CONFIG =====
-NUM_ESTRAZIONI = 120
+RUOTE = [
+    "Bari", "Cagliari", "Firenze", "Genova", "Milano",
+    "Napoli", "Palermo", "Roma", "Torino", "Venezia"
+]
 
-RUOTE_GEMELLE = {
-    "Bari": "Napoli",
-    "Napoli": "Bari",
-    "Cagliari": "Roma",
-    "Roma": "Cagliari",
-    "Firenze": "Genova",
-    "Genova": "Firenze",
-    "Milano": "Torino",
-    "Torino": "Milano",
-    "Palermo": "Venezia",
-    "Venezia": "Palermo"
-}
+ANALISI_ESTRAZIONI = 18
+DISTANZA_MIN = 6
+DISTANZA_MAX = 28
 
-# ===== CARICA DATI =====
-with open("estrazioni.json", "r") as f:
-    estrazioni = json.load(f)
 
-risultati = {"ruote": {}}
+def carica_estrazioni():
+    with open("estrazioni.json", "r", encoding="utf-8") as f:
+        return json.load(f)
 
-# ===== FUNZIONI =====
 
-def calcola_frequenze(estrazioni):
-    freq = defaultdict(int)
-    for estr in estrazioni:
-        for n in estr:
-            freq[n] += 1
+def distanza(a, b):
+    d = abs(a - b)
+    return min(d, 90 - d)
+
+
+def frequenze_recenti(storico):
+    freq = Counter()
+
+    recenti = storico[-ANALISI_ESTRAZIONI:]
+
+    for estrazione in recenti:
+        for numero in estrazione:
+            freq[numero] += 1
+
     return freq
 
-def calcola_ritardi(estrazioni):
-    ritardi = {n: 0 for n in range(1, 91)}
 
-    for n in range(1, 91):
-        for i in range(len(estrazioni)-1, -1, -1):
-            if n in estrazioni[i]:
-                ritardi[n] = len(estrazioni) - i
-                break
-    return ritardi
+def ritardo(numero, storico):
+    delay = 0
 
-def distanza_ok(n1, n2):
-    return abs(n1 - n2) <= 60  # evita ambi troppo distanti
+    for estrazione in reversed(storico):
+        if numero in estrazione:
+            return delay
+        delay += 1
 
-# ===== CALCOLO =====
-for ruota, estrazioni_ruota in estrazioni.items():
+    return delay
 
-    ultime = estrazioni_ruota[-NUM_ESTRAZIONI:]
-    ultima_estrazione = estrazioni_ruota[-1]
 
-    freq = calcola_frequenze(ultime)
-    ritardi = calcola_ritardi(ultime)
+def coppia_valida(a, b, ultima):
+    if a == b:
+        return False
 
-    score_numeri = {}
+    dist = distanza(a, b)
 
-    for n in range(1, 91):
-        f = freq[n]
-        r = ritardi[n]
+    if dist < DISTANZA_MIN:
+        return False
 
-        # 🔥 formula equilibrata
-        score = (f * 2.2) + (r * 0.4)
+    if dist > DISTANZA_MAX:
+        return False
 
-        # penalità leggera
-        if n in ultima_estrazione:
-            score -= 5
+    # evita doppio numero appena uscito
+    if a in ultima and b in ultima:
+        return False
 
-        score_numeri[n] = score
+    return True
 
-    ordinati = sorted(score_numeri.items(), key=lambda x: x[1], reverse=True)
 
-    top_numeri = [n for n,_ in ordinati[:15]]
+def trova_ambo_reale(storico):
+    ultima = storico[-1]
+    freq = frequenze_recenti(storico)
 
-    # ===== CREA AMBI =====
-    migliori_ambi = []
+    candidati = []
 
-    for i in range(len(top_numeri)):
-        for j in range(i+1, len(top_numeri)):
-            n1 = top_numeri[i]
-            n2 = top_numeri[j]
+    # top 20 numeri più forti
+    numeri_forti = [
+        n for n, _ in sorted(
+            freq.items(),
+            key=lambda x: x[1],
+            reverse=True
+        )[:20]
+    ]
 
-            if not distanza_ok(n1, n2):
-                continue
+    for a, b in combinations(numeri_forti, 2):
 
-            score = score_numeri[n1] + score_numeri[n2]
-            migliori_ambi.append(((n1, n2), score))
+        if not coppia_valida(a, b, ultima):
+            continue
 
-    migliori_ambi.sort(key=lambda x: x[1], reverse=True)
+        freq_score = (freq[a] + freq[b]) * 12
 
-    ambo = list(migliori_ambi[0][0])
-    score_finale = round(migliori_ambi[0][1], 2)
+        rit_score = (
+            ritardo(a, storico) +
+            ritardo(b, storico)
+        ) * 6
 
-    risultati["ruote"][ruota] = {
-        "ambo": ambo,
-        "score": score_finale
+        dist = distanza(a, b)
+
+        bonus = 0
+
+        if 8 <= dist <= 16:
+            bonus += 30
+
+        if str(a)[-1] == str(b)[-1]:
+            bonus += 12
+
+        if abs((a // 10) - (b // 10)) == 1:
+            bonus += 10
+
+        score = freq_score + rit_score + bonus
+
+        candidati.append({
+            "numeri": sorted([a, b]),
+            "score": round(score, 2)
+        })
+
+    if not candidati:
+        return {
+            "numeri": [7, 29],
+            "score": 0
+        }
+
+    candidati.sort(
+        key=lambda x: x["score"],
+        reverse=True
+    )
+
+    return candidati[0]
+
+
+def genera():
+    dati = carica_estrazioni()
+
+    risultati = []
+
+    for ruota in RUOTE:
+        if ruota not in dati:
+            continue
+
+        storico = dati[ruota]
+
+        if len(storico) < 5:
+            continue
+
+        previsione = trova_ambo_reale(storico)
+
+        risultati.append({
+            "ruota": ruota,
+            "numeri": previsione["numeri"],
+            "score": previsione["score"],
+            "ultima_estrazione": storico[-1]
+        })
+
+    risultati.sort(
+        key=lambda x: x["score"],
+        reverse=True
+    )
+
+    top = risultati[:2]  # più selettivo
+    jolly = top[0] if top else {}
+
+    output = {
+        "top": top,
+        "jolly": jolly,
+        "ambo_forte": risultati
     }
 
-# ===== TOP =====
-top = sorted(
-    [(r, risultati["ruote"][r]["score"]) for r in risultati["ruote"]],
-    key=lambda x: x[1],
-    reverse=True
-)[:3]
+    with open("risultati.json", "w", encoding="utf-8") as f:
+        json.dump(
+            output,
+            f,
+            indent=4,
+            ensure_ascii=False
+        )
 
-risultati["top"] = [r[0] for r in top]
+    print("MOTORE 6 aggiornato correttamente")
 
-# ===== JOLLY PRO =====
-jolly_ruota = random.choice(risultati["top"])
-ambo_top = risultati["ruote"][jolly_ruota]["ambo"]
 
-usa_gemella = random.random() < 0.35
-
-if usa_gemella:
-    gemella = RUOTE_GEMELLE.get(jolly_ruota, jolly_ruota)
-
-    ultime = estrazioni[gemella][-80:]
-    freq = calcola_frequenze(ultime)
-    ritardi = calcola_ritardi(ultime)
-
-    score_numeri = {}
-
-    for n in range(1,91):
-        score_numeri[n] = (freq[n]*2) + (ritardi[n]*0.5)
-
-    ordinati = sorted(score_numeri.items(), key=lambda x: x[1], reverse=True)
-
-    candidati = [n for n,_ in ordinati[:15]]
-
-    jolly_ambo = random.sample(candidati, 2)
-
-    risultati["jolly"] = {
-        "ruota": gemella + " (gemella)",
-        "ambo": jolly_ambo
-    }
-
-else:
-    ultime = estrazioni[jolly_ruota][-80:]
-    freq = calcola_frequenze(ultime)
-    ritardi = calcola_ritardi(ultime)
-
-    score_numeri = {}
-
-    for n in range(1,91):
-        score_numeri[n] = (freq[n]*2) + (ritardi[n]*0.5)
-
-    ordinati = sorted(score_numeri.items(), key=lambda x: x[1], reverse=True)
-
-    candidati = [n for n,_ in ordinati if n not in ambo_top][:15]
-
-    jolly_ambo = random.sample(candidati, 2)
-
-    risultati["jolly"] = {
-        "ruota": jolly_ruota,
-        "ambo": jolly_ambo
-    }
-
-# ===== SALVA =====
-with open("risultati.json", "w") as f:
-    json.dump(risultati, f, indent=2)
-
-print("🔥 MOTORE 4 DEFINITIVO ATTIVO")
+if __name__ == "__main__":
+    genera()
