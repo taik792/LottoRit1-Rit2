@@ -1,103 +1,153 @@
-COSA FA IL MOTORE 3 (IN PRATICA)
+LOTTO EVOLUTION PRO MAX – GUIDA PRATICA
 
-Non è un generatore casuale.
+---
 
-👉 È un sistema che cerca numeri “in fase di uscita”
+1. COME LEGGERE IL PROGRAMMA
 
-🧠 1. ANALIZZA LE ULTIME ESTRAZIONI
+---
 
-Prende circa:
+Ogni ruota mostra:
 
-👉 ultime 60 estrazioni per ogni ruota
+- Ultima → ultimi 5 numeri usciti
+- Caldi → numeri più frequenti
+- Ambo → combinazione suggerita
+- Ciclo → ritardo / tempo di uscita
+- Indice → forza statistica
+- Saturazione → quanto è “carica” la ruota
 
-E studia:
+---
 
-quante volte esce un numero
-da quanto tempo non esce
-ogni quanto tende a uscire
-📊 2. CALCOLA 3 COSE IMPORTANTI
-✅ RITARDO
+2. SIGNIFICATO DEI VALORI
 
-👉 da quante estrazioni NON esce
+---
 
-Esempio:
+INDICE (FORZA)
 
-numero 45 non esce da 12 → ritardo alto
-✅ FREQUENZA
+< 2   → debole
+2 - 4 → medio
 
-👉 quante volte è uscito
+«4   → forte 🔥»
 
-numero caldo = uscito spesso
-numero freddo = esce poco
-✅ RANGE (LA PARTE PIÙ IMPORTANTE)
+👉 Più è alto = più il numero è “spinto”
 
-👉 ogni numero ha un “ritmo”
+---
 
-Esempio:
+CICLO (TEMPO / RITARDO)
 
-il 23 esce ogni 7–10 estrazioni
-se ora è a 11 → è “pronto”
+< 0.5 → appena uscito (scarico)
+0.8 - 2 → perfetto ✅
 
-👉 questo è il cuore del motore 3
+«3 → ritardatario (può esplodere)»
 
-⚙️ 3. CREA UNO SCORE
+👉 NON è forza, ma momento
 
-Per ogni numero:
+---
 
-score = ritardo + frequenza + bonus range
+SATURAZIONE
 
-👉 più alto = più interessante
+0.3 - 0.6 → normale
+0.7 - 1   → buona
 
-🎲 4. NON PRENDE SEMPRE I MIGLIORI
+«1       → molto carica 🔥»
 
-Questa è la differenza dal motore 2 👇
+👉 più è alta = più la ruota è attiva
 
-👉 NON prende sempre top 1,2,3
-👉 prende da un pool più largo (top 40)
+---
 
-e sceglie con:
+3. COME SCEGLIERE UN AMBO
 
-random controllato
-filtri intelligenti
-🚫 5. EVITA ERRORI CLASSICI
+---
 
-Il motore evita:
+Un ambo è BUONO quando:
 
-❌ numeri appena usciti
-❌ numeri troppo vicini (es: 45–46)
-❌ numeri sempre uguali
-❌ doppioni tra ruote
+✔ entrambi i numeri hanno:
 
-🔗 6. CREA GLI AMBI
+- indice sopra 3
+- ciclo tra 0.8 e 2
 
-Non prende numeri a caso:
+✔ oppure:
 
-👉 controlla anche se i due numeri stanno bene insieme
+- uno molto forte (indice >4)
+- l’altro stabile
 
-(con il bonus che abbiamo aggiunto)
+---
 
-🏆 7. CREA TOP
+4. AMBI DA EVITARE
 
-Prende:
+---
 
-👉 le 3 ruote con score più alto
+❌ ciclo troppo basso (0.1 / 0.2)
+→ numero appena uscito
 
-💣 8. CREA JOLLY
+❌ indice sotto 2
+→ poco valore
 
-👉 sceglie tra i TOP (non sempre il primo)
+❌ numeri sbilanciati
+→ uno alto e uno morto
 
-così non è prevedibile
+---
 
-📊 9. RISULTATO FINALE
+5. STRATEGIA REALE DI GIOCO
 
-Hai:
+---
 
-TOP = giocate forti
-JOLLY = giocata principale
-RUOTE = copertura completa
-🔥 DIFFERENZA MOTORE 2 vs 3
-Motore 2	Motore 3
-più stabile	più dinamico
-numeri ripetuti	numeri variabili
-semplice	più intelligente
-meno filtri	più filtri
+Metodo semplice:
+
+1) guarda TOP GIOCATE (in alto)
+2) scegli massimo 2–3 ambi
+3) gioca per 3-5 colpi
+4) NON inseguire
+
+---
+
+Metodo intelligente:
+
+- Ambata forte → numero con indice più alto
+- Ambo → leggero
+- eventuale terno → aggiungi 3° numero caldo
+
+---
+
+6. REGOLA D’ORO
+
+---
+
+INDICE = FORZA
+CICLO = TEMPO
+
+👉 serve SEMPRE l’unione dei due
+
+---
+
+7. ESEMPIO PRATICO
+
+---
+
+Ambo: 1–50
+
+Indice:
+3.4 | 4.4 → buono
+
+Ciclo:
+0.5 | 1.5 → uno scarico, uno perfetto
+
+👉 risultato:
+ambo giocabile ma non top
+
+---
+
+8. OBIETTIVO DEL SISTEMA
+
+---
+
+NON predire al 100%
+
+👉 ma trovare:
+
+- numeri più probabili
+- momenti migliori
+- ridurre errori
+
+---
+
+FINE GUIDA
