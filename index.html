@@ -17,51 +17,44 @@ body {
 
 h1 {
     color: #00eaff;
-    font-size: 42px;
+    font-size: 40px;
     margin-bottom: 10px;
 }
 
 h2 {
-    font-size: 26px;
     margin: 30px 0 20px;
-}
-
-.sezione {
-    margin-bottom: 40px;
+    font-size: 30px;
 }
 
 .griglia {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
     gap: 20px;
-    max-width: 1300px;
+    max-width: 1400px;
     margin: auto;
 }
 
 .card-top {
-    background: #4b3600;
-    border: 4px solid gold;
+    background: #4a3500;
+    border: 3px solid gold;
     border-radius: 20px;
     padding: 20px;
-    box-shadow: 0 0 15px rgba(255,215,0,0.3);
 }
 
 .card-jolly {
     background: #c40000;
-    border: 4px solid red;
+    border: 3px solid #ff0000;
     border-radius: 20px;
     padding: 25px;
     max-width: 700px;
     margin: auto;
-    box-shadow: 0 0 20px rgba(255,0,0,0.4);
 }
 
 .card-terno {
-    background: #102f4d;
-    border: 4px solid #00eaff;
+    background: #10304f;
+    border: 3px solid #00eaff;
     border-radius: 20px;
     padding: 20px;
-    box-shadow: 0 0 15px rgba(0,234,255,0.3);
 }
 
 .ruota {
@@ -72,43 +65,26 @@ h2 {
 
 .label {
     font-size: 18px;
-    margin-top: 10px;
-    margin-bottom: 8px;
-    color: #ffffff;
+    margin: 10px 0;
 }
 
 .numeri {
-    font-size: 42px;
+    font-size: 38px;
     font-weight: bold;
     color: #00eaff;
     margin: 15px 0;
 }
 
 .estrazione {
-    font-size: 24px;
-    color: #ffffff;
+    font-size: 22px;
     margin: 10px 0;
 }
 
 .score {
-    font-size: 28px;
+    font-size: 26px;
     color: #ffc0cb;
     font-weight: bold;
     margin-top: 15px;
-}
-
-@media (max-width: 900px) {
-    .griglia {
-        grid-template-columns: 1fr;
-    }
-
-    .numeri {
-        font-size: 34px;
-    }
-
-    h1 {
-        font-size: 32px;
-    }
 }
 </style>
 </head>
@@ -117,20 +93,14 @@ h2 {
 <h1>🔥 LOTTO ELITE PRO</h1>
 <h2>Motore 8</h2>
 
-<div class="sezione">
-    <h2>🎯 TOP</h2>
-    <div class="griglia" id="top"></div>
-</div>
+<h2>🎯 TOP</h2>
+<div class="griglia" id="top"></div>
 
-<div class="sezione">
-    <h2>💣 JOLLY</h2>
-    <div id="jolly"></div>
-</div>
+<h2>💣 JOLLY</h2>
+<div id="jolly"></div>
 
-<div class="sezione">
-    <h2>📊 TERNO FORTE</h2>
-    <div class="griglia" id="terno-forte"></div>
-</div>
+<h2>📊 TERNO FORTE</h2>
+<div class="griglia" id="terno-forte"></div>
 
 <script>
 const ordineRuote = [
@@ -147,23 +117,24 @@ const ordineRuote = [
     "Nazionale"
 ];
 
-function formatTerno(terno) {
-    return terno.join(" — ");
+function formatTerno(arr) {
+    if (!arr || !Array.isArray(arr)) return "---";
+    return arr.join(" — ");
 }
 
-function formatEstrazione(estrazione) {
-    return estrazione.join(" • ");
+function formatEstrazione(arr) {
+    if (!arr || !Array.isArray(arr)) return "---";
+    return arr.join(" • ");
 }
 
-function getUltimaEstrazione(estrazioni, ruota) {
-    if (!estrazioni[ruota] || estrazioni[ruota].length === 0) {
-        return [];
-    }
-
-    return estrazioni[ruota][estrazioni[ruota].length - 1];
+function ultimaEstrazione(estrazioni, ruota) {
+    if (!estrazioni[ruota]) return [];
+    const lista = estrazioni[ruota];
+    if (!lista.length) return [];
+    return lista[lista.length - 1];
 }
 
-function creaCardTop(item) {
+function cardTop(item) {
     return `
         <div class="card-top">
             <div class="ruota">${item.ruota}</div>
@@ -173,7 +144,7 @@ function creaCardTop(item) {
     `;
 }
 
-function creaCardJolly(item) {
+function cardJolly(item) {
     return `
         <div class="card-jolly">
             <div class="ruota">${item.ruota}</div>
@@ -183,13 +154,13 @@ function creaCardJolly(item) {
     `;
 }
 
-function creaCardTerno(item, ultimaEstrazione) {
+function cardTerno(item, ultima) {
     return `
         <div class="card-terno">
             <div class="ruota">${item.ruota}</div>
 
             <div class="label">Ultima Estrazione</div>
-            <div class="estrazione">${formatEstrazione(ultimaEstrazione)}</div>
+            <div class="estrazione">${formatEstrazione(ultima)}</div>
 
             <div class="label">Terno Forte</div>
             <div class="numeri">${formatTerno(item.terno)}</div>
@@ -199,36 +170,45 @@ function creaCardTerno(item, ultimaEstrazione) {
     `;
 }
 
-async function caricaDati() {
+async function carica() {
     try {
-        const risultatiRes = await fetch("risultati.json");
-        const risultati = await risultatiRes.json();
+        const r1 = await fetch("risultati.json");
+        const risultati = await r1.json();
 
-        const estrazioniRes = await fetch("estrazioni.json");
-        const estrazioni = await estrazioniRes.json();
+        const r2 = await fetch("estrazioni.json");
+        const estrazioni = await r2.json();
 
         document.getElementById("top").innerHTML =
-            risultati.top.map(creaCardTop).join("");
+            (risultati.top || []).map(cardTop).join("");
 
-        document.getElementById("jolly").innerHTML =
-            creaCardJolly(risultati.jolly);
+        let jollyData = risultati.jolly;
 
-        const ordinati = risultati.terno_forte.sort((a, b) => {
-            return ordineRuote.indexOf(a.ruota) - ordineRuote.indexOf(b.ruota);
-        });
+        if (Array.isArray(jollyData)) {
+            jollyData = jollyData[0];
+        }
+
+        if (jollyData) {
+            document.getElementById("jolly").innerHTML =
+                cardJolly(jollyData);
+        }
+
+        let terno = risultati.terno_forte || [];
+
+        terno.sort((a, b) =>
+            ordineRuote.indexOf(a.ruota) - ordineRuote.indexOf(b.ruota)
+        );
 
         document.getElementById("terno-forte").innerHTML =
-            ordinati.map(item => {
-                const ultima = getUltimaEstrazione(estrazioni, item.ruota);
-                return creaCardTerno(item, ultima);
-            }).join("");
+            terno.map(item =>
+                cardTerno(item, ultimaEstrazione(estrazioni, item.ruota))
+            ).join("");
 
-    } catch (errore) {
-        console.error("Errore caricamento dati:", errore);
+    } catch (e) {
+        console.error("Errore:", e);
     }
 }
 
-caricaDati();
+carica();
 </script>
 
 </body>
