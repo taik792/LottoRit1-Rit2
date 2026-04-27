@@ -1,5 +1,4 @@
 import json
-from collections import Counter
 
 RUOTE = [
     "Bari",
@@ -11,109 +10,84 @@ RUOTE = [
     "Palermo",
     "Roma",
     "Torino",
-    "Venezia"
+    "Venezia",
+    "Nazionale"
 ]
-
-FILE_ESTRAZIONI = "estrazioni.json"
-FILE_RISULTATI = "risultati.json"
-
-
-def normalizza_numero(n):
-    """
-    Mantiene i numeri tra 1 e 90
-    perché il lotto, con raro buon senso,
-    non accetta il 147.
-    """
-    while n > 90:
-        n -= 90
-    while n < 1:
-        n += 90
-    return n
 
 
 def carica_estrazioni():
-    with open(FILE_ESTRAZIONI, "r", encoding="utf-8") as f:
-        return json.load(f)
+    with open("estrazioni.json", "r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def salva_risultati(risultati):
+    with open("risultati.json", "w", encoding="utf-8") as file:
+        json.dump(risultati, file, indent=2, ensure_ascii=False)
 
 
 def prendi_ultime_5_ruota(dati, ruota):
     """
-    Prende le ultime 5 estrazioni della ruota
+    Il tuo estrazioni.json è strutturato così:
+
+    {
+      "Bari": [
+        [26, 59, 60, 67, 17],
+        [84, 80, 40, 15, 9],
+        ...
+      ],
+      "Cagliari": [...]
+    }
+
+    quindi:
+    dati[ruota] = lista estrazioni
     """
+
     ultime = []
 
-    for estrazione in reversed(dati):
-        if ruota in estrazione:
-            valori = estrazione[ruota]
+    if ruota not in dati:
+        return []
 
-            if isinstance(valori, list) and len(valori) >= 5:
-                ultime.append(valori[:5])
+    estrazioni_ruota = dati[ruota]
 
-        if len(ultime) == 5:
-            break
+    # dalla più recente alla più vecchia
+    for estrazione in reversed(estrazioni_ruota):
+        for numero in estrazione:
+            if numero not in ultime:
+                ultime.append(numero)
 
-    return ultime
+            if len(ultime) >= 5:
+                return ultime[:5]
+
+    return ultime[:5]
 
 
-def calcola_terno(ultime_5):
+def genera_terno(ultime_5):
     """
-    Logica Motore 8:
-    usa frequenze + somme + ritardo implicito
-    senza affidarsi agli astri.
+    Logica base Motore 8:
+    prende i primi 3 numeri più forti
     """
 
-    tutti = []
-    for estrazione in ultime_5:
-        tutti.extend(estrazione)
+    if len(ultime_5) < 3:
+        return [1, 2, 3]
 
-    frequenze = Counter(tutti)
+    return ultime_5[:3]
 
-    # più frequenti
-    frequenti = [
-        numero for numero, _ in frequenze.most_common(6)
-    ]
 
-    # se pochi numeri disponibili
-    while len(frequenti) < 6:
-        frequenti.append(normalizza_numero(len(frequenti) * 11 + 7))
+def calcola_score(terno):
+    """
+    Score semplice:
+    più i numeri sono alti, più score alto
+    (poi lo miglioriamo, perché la vita ama complicarsi)
+    """
 
-    base = frequenti[:3]
-
-    # trasformazione numerica
-    n1 = normalizza_numero(base[0] + base[1])
-    n2 = normalizza_numero(base[1] + base[2])
-    n3 = normalizza_numero(base[0] + base[2])
-
-    terno = list(set([
-        n1,
-        n2,
-        n3,
-        base[0],
-        base[1],
-        base[2]
-    ]))
-
-    # ordina e prende i migliori 3
-    terno = sorted(terno)[:3]
-
-    # score semplice
-    score = (
-        frequenze.get(base[0], 0) * 100 +
-        frequenze.get(base[1], 0) * 100 +
-        frequenze.get(base[2], 0) * 100 +
-        sum(terno)
-    )
-
-    return {
-        "terno": terno,
-        "score": score
-    }
+    return sum(terno) * 10 + len(set(terno)) * 3
 
 
 def genera_risultati():
     dati = carica_estrazioni()
 
-    previsioni = []
+    top = []
+    terno_forte = []
 
     for ruota in RUOTE:
         ultime_5 = prendi_ultime_5_ruota(dati, ruota)
@@ -121,43 +95,40 @@ def genera_risultati():
         if len(ultime_5) < 3:
             continue
 
-        risultato = calcola_terno(ultime_5)
+        terno = genera_terno(ultime_5)
+        score = calcola_score(terno)
 
-        previsioni.append({
+        record = {
             "ruota": ruota,
-            "terno": risultato["terno"],
-            "score": risultato["score"]
-        })
+            "terno": terno,
+            "score": score
+        }
 
-    # ordina per score
-    previsioni.sort(
-        key=lambda x: x["score"],
-        reverse=True
-    )
+        top.append(record)
+        terno_forte.append(record)
 
-    top = previsioni[:3]
+    # ordina per score decrescente
+    top.sort(key=lambda x: x["score"], reverse=True)
+    terno_forte.sort(key=lambda x: x["score"], reverse=True)
 
+    # TOP = prime 3
+    top = top[:3]
+
+    # JOLLY = migliore assoluto
     jolly = top[0] if top else {
-        "ruota": "-",
-        "terno": [],
+        "ruota": "Bari",
+        "terno": [1, 2, 3],
         "score": 0
     }
 
-    risultati_finali = {
+    risultati = {
         "top": top,
         "jolly": jolly,
-        "terno_forte": previsioni
+        "terno_forte": terno_forte
     }
 
-    with open(FILE_RISULTATI, "w", encoding="utf-8") as f:
-        json.dump(
-            risultati_finali,
-            f,
-            indent=4,
-            ensure_ascii=False
-        )
-
-    print("risultati.json generato correttamente")
+    salva_risultati(risultati)
+    print("risultati.json aggiornato correttamente")
 
 
 if __name__ == "__main__":
