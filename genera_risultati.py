@@ -1,4 +1,5 @@
 import json
+from collections import Counter
 
 RUOTE = [
     "Bari",
@@ -13,120 +14,151 @@ RUOTE = [
     "Venezia"
 ]
 
+FILE_ESTRAZIONI = "estrazioni.json"
+FILE_RISULTATI = "risultati.json"
+
+
+def normalizza_numero(n):
+    """
+    Mantiene i numeri tra 1 e 90
+    perché il lotto, con raro buon senso,
+    non accetta il 147.
+    """
+    while n > 90:
+        n -= 90
+    while n < 1:
+        n += 90
+    return n
+
 
 def carica_estrazioni():
-    with open("estrazioni.json", "r", encoding="utf-8") as f:
+    with open(FILE_ESTRAZIONI, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def score_numero(storico, numero):
-    score = 0
+def prendi_ultime_5_ruota(dati, ruota):
+    """
+    Prende le ultime 5 estrazioni della ruota
+    """
+    ultime = []
 
-    # Frequenza pesata sulle ultime 30 estrazioni
-    ultime_30 = storico[-30:]
+    for estrazione in reversed(dati):
+        if ruota in estrazione:
+            valori = estrazione[ruota]
 
-    for i, estrazione in enumerate(reversed(ultime_30), start=1):
-        peso = 31 - i
+            if isinstance(valori, list) and len(valori) >= 5:
+                ultime.append(valori[:5])
 
-        if numero in estrazione:
-            score += peso * 3
+        if len(ultime) == 5:
+            break
 
-    # Bonus decina forte
-    decina = numero // 10
-
-    for estrazione in storico[-15:]:
-        for n in estrazione:
-            if n // 10 == decina:
-                score += 2
-
-    # Bonus numeri forti/speculari
-    numeri_forti = [9, 18, 27, 36, 45, 54, 63, 72, 81, 90]
-
-    if numero in numeri_forti:
-        score += 12
-
-    return score
+    return ultime
 
 
-def genera_previsione_ruota(storico):
-    ultima = storico[-1]
+def calcola_terno(ultime_5):
+    """
+    Logica Motore 8:
+    usa frequenze + somme + ritardo implicito
+    senza affidarsi agli astri.
+    """
 
-    candidati = []
+    tutti = []
+    for estrazione in ultime_5:
+        tutti.extend(estrazione)
 
-    for numero in range(1, 91):
-        # Evita numeri già usciti nell’ultima estrazione
-        if numero not in ultima:
-            score = score_numero(storico, numero)
-            candidati.append((numero, score))
+    frequenze = Counter(tutti)
 
-    candidati.sort(key=lambda x: x[1], reverse=True)
-
-    top3 = [
-        candidati[0][0],
-        candidati[1][0],
-        candidati[2][0]
+    # più frequenti
+    frequenti = [
+        numero for numero, _ in frequenze.most_common(6)
     ]
 
-    score_totale = (
-        candidati[0][1] +
-        candidati[1][1] +
-        candidati[2][1]
+    # se pochi numeri disponibili
+    while len(frequenti) < 6:
+        frequenti.append(normalizza_numero(len(frequenti) * 11 + 7))
+
+    base = frequenti[:3]
+
+    # trasformazione numerica
+    n1 = normalizza_numero(base[0] + base[1])
+    n2 = normalizza_numero(base[1] + base[2])
+    n3 = normalizza_numero(base[0] + base[2])
+
+    terno = list(set([
+        n1,
+        n2,
+        n3,
+        base[0],
+        base[1],
+        base[2]
+    ]))
+
+    # ordina e prende i migliori 3
+    terno = sorted(terno)[:3]
+
+    # score semplice
+    score = (
+        frequenze.get(base[0], 0) * 100 +
+        frequenze.get(base[1], 0) * 100 +
+        frequenze.get(base[2], 0) * 100 +
+        sum(terno)
     )
 
     return {
-        "ultima": ultima,
-        "terno": top3,
-        "score": score_totale
+        "terno": terno,
+        "score": score
     }
 
 
-def main():
+def genera_risultati():
     dati = carica_estrazioni()
 
-    risultati = {}
+    previsioni = []
 
     for ruota in RUOTE:
-        storico = dati.get(ruota, [])
+        ultime_5 = prendi_ultime_5_ruota(dati, ruota)
 
-        if len(storico) < 5:
+        if len(ultime_5) < 3:
             continue
 
-        risultati[ruota] = genera_previsione_ruota(storico)
+        risultato = calcola_terno(ultime_5)
 
-    top = sorted(
-        risultati.items(),
-        key=lambda x: x[1]["score"],
+        previsioni.append({
+            "ruota": ruota,
+            "terno": risultato["terno"],
+            "score": risultato["score"]
+        })
+
+    # ordina per score
+    previsioni.sort(
+        key=lambda x: x["score"],
         reverse=True
-    )[:3]
+    )
 
-    finale = {
-        "top": [
-            {
-                "ruota": ruota,
-                "terno": valori["terno"],
-                "score": valori["score"]
-            }
-            for ruota, valori in top
-        ],
+    top = previsioni[:3]
 
-        "jolly": {
-            "ruota": top[0][0],
-            "terno": top[0][1]["terno"]
-        },
-
-        "ruote": risultati
+    jolly = top[0] if top else {
+        "ruota": "-",
+        "terno": [],
+        "score": 0
     }
 
-    with open("risultati.json", "w", encoding="utf-8") as f:
+    risultati_finali = {
+        "top": top,
+        "jolly": jolly,
+        "terno_forte": previsioni
+    }
+
+    with open(FILE_RISULTATI, "w", encoding="utf-8") as f:
         json.dump(
-            finale,
+            risultati_finali,
             f,
-            indent=2,
+            indent=4,
             ensure_ascii=False
         )
 
-    print("Motore 8 generato correttamente")
+    print("risultati.json generato correttamente")
 
 
 if __name__ == "__main__":
-    main()
+    genera_risultati()
