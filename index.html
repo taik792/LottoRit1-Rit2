@@ -8,111 +8,105 @@
 <style>
 body {
     margin: 0;
-    padding: 0;
-    background: #041f33;
-    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #031f35;
     color: white;
+    font-family: Arial, sans-serif;
     text-align: center;
 }
 
 h1 {
     color: #00eaff;
     font-size: 42px;
-    margin-top: 30px;
     margin-bottom: 10px;
 }
 
 h2 {
-    font-size: 42px;
+    font-size: 26px;
     margin: 30px 0 20px;
-    font-weight: bold;
 }
 
-.section {
-    margin-top: 40px;
+.sezione {
+    margin-bottom: 40px;
 }
 
-.grid-top {
+.griglia {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    max-width: 1100px;
+    max-width: 1300px;
     margin: auto;
-    padding: 20px;
-}
-
-.grid-terno {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    max-width: 1200px;
-    margin: auto;
-    padding: 20px;
 }
 
 .card-top {
-    background: #3a2b00;
-    border: 4px solid #ffd700;
-    border-radius: 25px;
-    padding: 25px;
+    background: #4b3600;
+    border: 4px solid gold;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(255,215,0,0.3);
 }
 
 .card-jolly {
     background: #c40000;
-    border: 4px solid #ff2a2a;
-    border-radius: 25px;
-    padding: 30px;
+    border: 4px solid red;
+    border-radius: 20px;
+    padding: 25px;
     max-width: 700px;
     margin: auto;
+    box-shadow: 0 0 20px rgba(255,0,0,0.4);
 }
 
 .card-terno {
-    background: #0d2d4a;
+    background: #102f4d;
     border: 4px solid #00eaff;
-    border-radius: 25px;
+    border-radius: 20px;
     padding: 20px;
+    box-shadow: 0 0 15px rgba(0,234,255,0.3);
 }
 
 .ruota {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     margin-bottom: 15px;
 }
 
-.estrazione {
+.label {
     font-size: 18px;
-    margin-bottom: 20px;
-    line-height: 1.6;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    color: #ffffff;
 }
 
 .numeri {
-    font-size: 30px;
+    font-size: 42px;
     font-weight: bold;
     color: #00eaff;
-    margin: 20px 0;
+    margin: 15px 0;
+}
+
+.estrazione {
+    font-size: 24px;
+    color: #ffffff;
+    margin: 10px 0;
 }
 
 .score {
+    font-size: 28px;
     color: #ffc0cb;
-    font-size: 20px;
     font-weight: bold;
+    margin-top: 15px;
 }
 
-@media(max-width: 768px) {
-    .grid-top,
-    .grid-terno {
+@media (max-width: 900px) {
+    .griglia {
         grid-template-columns: 1fr;
     }
 
     .numeri {
-        font-size: 24px;
-    }
-
-    h1 {
         font-size: 34px;
     }
 
-    h2 {
+    h1 {
         font-size: 32px;
     }
 }
@@ -123,117 +117,111 @@ h2 {
 <h1>🔥 LOTTO ELITE PRO</h1>
 <h2>Motore 8</h2>
 
-<div class="section">
+<div class="sezione">
     <h2>🎯 TOP</h2>
-    <div id="top" class="grid-top"></div>
+    <div class="griglia" id="top"></div>
 </div>
 
-<div class="section">
+<div class="sezione">
     <h2>💣 JOLLY</h2>
     <div id="jolly"></div>
 </div>
 
-<div class="section">
+<div class="sezione">
     <h2>📊 TERNO FORTE</h2>
-    <div id="terno" class="grid-terno"></div>
+    <div class="griglia" id="terno-forte"></div>
 </div>
 
 <script>
+const ordineRuote = [
+    "Bari",
+    "Cagliari",
+    "Firenze",
+    "Genova",
+    "Milano",
+    "Napoli",
+    "Palermo",
+    "Roma",
+    "Torino",
+    "Venezia",
+    "Nazionale"
+];
+
+function formatTerno(terno) {
+    return terno.join(" — ");
+}
+
+function formatEstrazione(estrazione) {
+    return estrazione.join(" • ");
+}
+
+function getUltimaEstrazione(estrazioni, ruota) {
+    if (!estrazioni[ruota] || estrazioni[ruota].length === 0) {
+        return [];
+    }
+
+    return estrazioni[ruota][estrazioni[ruota].length - 1];
+}
+
+function creaCardTop(item) {
+    return `
+        <div class="card-top">
+            <div class="ruota">${item.ruota}</div>
+            <div class="numeri">${formatTerno(item.terno)}</div>
+            <div class="score">Score: ${item.score}</div>
+        </div>
+    `;
+}
+
+function creaCardJolly(item) {
+    return `
+        <div class="card-jolly">
+            <div class="ruota">${item.ruota}</div>
+            <div class="numeri">${formatTerno(item.terno)}</div>
+            <div class="score">Score: ${item.score}</div>
+        </div>
+    `;
+}
+
+function creaCardTerno(item, ultimaEstrazione) {
+    return `
+        <div class="card-terno">
+            <div class="ruota">${item.ruota}</div>
+
+            <div class="label">Ultima Estrazione</div>
+            <div class="estrazione">${formatEstrazione(ultimaEstrazione)}</div>
+
+            <div class="label">Terno Forte</div>
+            <div class="numeri">${formatTerno(item.terno)}</div>
+
+            <div class="score">Score: ${item.score}</div>
+        </div>
+    `;
+}
+
 async function caricaDati() {
     try {
-        // risultati del motore
-        const risultati = await fetch("./risultati.json")
-            .then(res => res.json());
+        const risultatiRes = await fetch("risultati.json");
+        const risultati = await risultatiRes.json();
 
-        // estrazioni dalla root del repository
-        const estrazioni = await fetch("./estrazioni.json")
-            .then(res => res.json());
+        const estrazioniRes = await fetch("estrazioni.json");
+        const estrazioni = await estrazioniRes.json();
 
-        const ordineRuote = [
-            "Bari",
-            "Cagliari",
-            "Firenze",
-            "Genova",
-            "Milano",
-            "Napoli",
-            "Palermo",
-            "Roma",
-            "Torino",
-            "Venezia"
-        ];
+        document.getElementById("top").innerHTML =
+            risultati.top.map(creaCardTop).join("");
 
-        // prende l'ULTIMA estrazione (ultima riga json)
-        const ultimaEstrazione = estrazioni[estrazioni.length - 1];
+        document.getElementById("jolly").innerHTML =
+            creaCardJolly(risultati.jolly);
 
-        const topDiv = document.getElementById("top");
-        const jollyDiv = document.getElementById("jolly");
-        const ternoDiv = document.getElementById("terno");
-
-        // =========================
-        // TOP
-        // =========================
-        risultati.top.forEach(item => {
-            topDiv.innerHTML += `
-                <div class="card-top">
-                    <div class="ruota">${item.ruota}</div>
-
-                    <div class="numeri">
-                        ${item.terno.join(" — ")}
-                    </div>
-
-                    <div class="score">
-                        Score: ${item.score}
-                    </div>
-                </div>
-            `;
+        const ordinati = risultati.terno_forte.sort((a, b) => {
+            return ordineRuote.indexOf(a.ruota) - ordineRuote.indexOf(b.ruota);
         });
 
-        // =========================
-        // JOLLY
-        // =========================
-        if (risultati.jolly) {
-            jollyDiv.innerHTML = `
-                <div class="card-jolly">
-                    <div class="ruota">${risultati.jolly.ruota}</div>
-
-                    <div class="numeri">
-                        ${risultati.jolly.terno.join(" — ")}
-                    </div>
-                </div>
-            `;
-        }
-
-        // =========================
-        // TERNO FORTE
-        // =========================
-        ordineRuote.forEach(ruota => {
-            const pronostico = risultati.terno_forte.find(
-                item => item.ruota === ruota
-            );
-
-            if (!pronostico) return;
-
-            const estrazioneRuota = ultimaEstrazione[ruota] || [];
-
-            ternoDiv.innerHTML += `
-                <div class="card-terno">
-                    <div class="ruota">${ruota}</div>
-
-                    <div class="estrazione">
-                        Ultima Estrazione<br>
-                        ${estrazioneRuota.join(" • ")}
-                    </div>
-
-                    <div class="numeri">
-                        ${pronostico.terno.join(" — ")}
-                    </div>
-
-                    <div class="score">
-                        Score: ${pronostico.score}
-                    </div>
-                </div>
-            `;
-        });
+        document.getElementById("terno-forte").innerHTML =
+            ordinati.map(item => {
+                const ultima = getUltimaEstrazione(estrazioni, item.ruota);
+                return creaCardTerno(item, ultima);
+            }).join("");
 
     } catch (errore) {
         console.error("Errore caricamento dati:", errore);
