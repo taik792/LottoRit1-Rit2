@@ -1,191 +1,132 @@
 {
   "top": [
     {
+      "ruota": "Genova",
+      "terno": [
+        89,
+        69,
+        88
+      ],
+      "score": 2469
+    },
+    {
+      "ruota": "Palermo",
+      "terno": [
+        75,
+        78,
+        68
+      ],
+      "score": 2219
+    },
+    {
+      "ruota": "Napoli",
+      "terno": [
+        83,
+        72,
+        60
+      ],
+      "score": 2159
+    }
+  ],
+  "jolly": {
+    "ruota": "Genova",
+    "terno": [
+      89,
+      69,
+      88
+    ],
+    "score": 2469
+  },
+  "terno_forte": [
+    {
+      "ruota": "Genova",
+      "terno": [
+        89,
+        69,
+        88
+      ],
+      "score": 2469
+    },
+    {
+      "ruota": "Palermo",
+      "terno": [
+        75,
+        78,
+        68
+      ],
+      "score": 2219
+    },
+    {
+      "ruota": "Napoli",
+      "terno": [
+        83,
+        72,
+        60
+      ],
+      "score": 2159
+    },
+    {
+      "ruota": "Milano",
+      "terno": [
+        71,
+        43,
+        45
+      ],
+      "score": 1599
+    },
+    {
       "ruota": "Bari",
       "terno": [
-        9,
-        71,
-        34
+        15,
+        88,
+        36
       ],
-      "score": 959
+      "score": 1399
+    },
+    {
+      "ruota": "Venezia",
+      "terno": [
+        13,
+        55,
+        71
+      ],
+      "score": 1399
+    },
+    {
+      "ruota": "Torino",
+      "terno": [
+        30,
+        39,
+        63
+      ],
+      "score": 1329
     },
     {
       "ruota": "Cagliari",
       "terno": [
-        50,
-        33,
-        90
+        49,
+        22,
+        46
       ],
-      "score": 845
+      "score": 1179
+    },
+    {
+      "ruota": "Firenze",
+      "terno": [
+        7,
+        85,
+        14
+      ],
+      "score": 1069
     },
     {
       "ruota": "Roma",
       "terno": [
-        38,
-        82,
-        52
-      ],
-      "score": 835
-    }
-  ],
-  "jolly": {
-    "ruota": "Bari",
-    "terno": [
-      9,
-      71,
-      34
-    ]
-  },
-  "ruote": {
-    "Bari": {
-      "ultima": [
-        15,
-        88,
-        36,
-        90,
-        37
-      ],
-      "terno": [
-        9,
-        71,
-        34
-      ],
-      "score": 959
-    },
-    "Cagliari": {
-      "ultima": [
-        49,
-        22,
-        46,
-        28,
-        86
-      ],
-      "terno": [
-        50,
-        33,
-        90
-      ],
-      "score": 845
-    },
-    "Firenze": {
-      "ultima": [
-        7,
-        85,
-        14,
-        84,
-        55
-      ],
-      "terno": [
-        72,
-        75,
-        49
-      ],
-      "score": 744
-    },
-    "Genova": {
-      "ultima": [
-        89,
-        69,
-        88,
-        41,
-        81
-      ],
-      "terno": [
-        64,
-        60,
-        2
-      ],
-      "score": 727
-    },
-    "Milano": {
-      "ultima": [
-        71,
-        43,
-        45,
-        25,
-        3
-      ],
-      "terno": [
-        20,
-        79,
-        7
-      ],
-      "score": 815
-    },
-    "Napoli": {
-      "ultima": [
-        83,
-        72,
-        60,
-        16,
-        21
-      ],
-      "terno": [
-        51,
-        31,
-        48
-      ],
-      "score": 620
-    },
-    "Palermo": {
-      "ultima": [
-        75,
-        78,
-        68,
-        80,
-        76
-      ],
-      "terno": [
-        84,
-        28,
-        74
-      ],
-      "score": 725
-    },
-    "Roma": {
-      "ultima": [
         13,
         25,
-        67,
-        83,
-        78
+        67
       ],
-      "terno": [
-        38,
-        82,
-        52
-      ],
-      "score": 835
-    },
-    "Torino": {
-      "ultima": [
-        30,
-        39,
-        63,
-        72,
-        81
-      ],
-      "terno": [
-        5,
-        21,
-        26
-      ],
-      "score": 793
-    },
-    "Venezia": {
-      "ultima": [
-        13,
-        55,
-        71,
-        89,
-        5
-      ],
-      "terno": [
-        15,
-        19,
-        54
-      ],
-      "score": 719
+      "score": 1059
     }
-  }
+  ]
 }
