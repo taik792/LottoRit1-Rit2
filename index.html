@@ -2,100 +2,71 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Lotto Elite Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lotto Elite PRO - Motore 8</title>
 
 <style>
 body {
-  background: #050816;
-  color: white;
-  font-family: Arial;
-  text-align: center;
+    margin: 0;
+    background: #031b2f;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
 }
 
-h1 { color: #00ff99; }
+h1 {
+    color: #00eaff;
+    margin-top: 30px;
+    font-size: 42px;
+}
 
-.container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
-  gap: 15px;
-  padding: 20px;
+h2 {
+    margin-top: 40px;
+    font-size: 38px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 30px;
 }
 
 .card {
-  border: 2px solid #00ff99;
-  border-radius: 15px;
-  padding: 15px;
+    background: #0d2f4f;
+    border: 4px solid #00f0ff;
+    border-radius: 28px;
+    padding: 20px;
+    box-shadow: 0 0 18px rgba(0,255,255,0.4);
 }
 
-.green { color:#00ff99; }
-.red { color:#ff4d4d; }
-</style>
+.top-card {
+    background: #3b2a00;
+    border-color: gold;
+}
 
+.jolly-card {
+    background: #8b0000;
+    border-color: red;
+}
+
+.numeri {
+    font-size: 42px;
+    color: #00f0ff;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.score {
+    color: pink;
+    font-size: 26px;
+}
+</style>
 </head>
 <body>
 
-<h1>🔥 LOTTO ELITE PRO Maria</h1>
+<h1>🔥 LOTTO ELITE PRO</h1>
+<h2>Motore 8</h2>
 
-<div id="top"></div>
-<div class="container" id="grid"></div>
-
-<script>
-fetch("risultati.json")
-.then(res => res.json())
-.then(data => {
-
-  if (!data || !data.ruote) {
-    document.body.innerHTML = "❌ ERRORE JSON";
-    return;
-  }
-
-  const ordine = [
-    "Bari","Cagliari","Firenze","Genova","Milano",
-    "Napoli","Palermo","Roma","Torino","Venezia"
-  ];
-
-  const grid = document.getElementById("grid");
-  const topBox = document.getElementById("top");
-
-  // 🔥 TOP SICURO
-  const topArray = data.top || [];
-
-  topBox.innerHTML = `
-    <h2>🔥 TOP GIOCATE</h2>
-    ${topArray.map(r => {
-      const ruota = data.ruote[r];
-      if (!ruota) return "";
-      return `${r} → ${ruota.ambo.join(" - ")}`;
-    }).join("<br>")}
-  `;
-
-  // 🔥 TUTTE LE RUOTE
-  ordine.forEach(nome => {
-
-    const r = data.ruote[nome];
-
-    const ultima = r?.ultima?.length ? r.ultima.join(" - ") : "-";
-    const ambo = r?.ambo?.length ? r.ambo.join(" - ") : "-";
-    const score = r?.score ?? 0;
-
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <h3>${nome}</h3>
-      <p>Ultima: ${ultima}</p>
-      <p class="green">Ambo: ${ambo}</p>
-      <p class="red">Score: ${score}</p>
-    `;
-
-    grid.appendChild(card);
-  });
-
-})
-.catch(err => {
-  document.body.innerHTML = "❌ JS ERROR: " + err;
-});
-</script>
-
-</body>
+<div id="app"></div>
 </html>
