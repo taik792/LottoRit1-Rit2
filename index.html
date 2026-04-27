@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lotto Elite PRO - Motore 8</title>
+<title>Motore 8</title>
 
 <style>
 body {
     margin: 0;
+    padding: 0;
     background: #031b2f;
     color: white;
     font-family: Arial, sans-serif;
@@ -16,18 +17,18 @@ body {
 
 h1 {
     color: #00eaff;
+    font-size: 48px;
     margin-top: 30px;
-    font-size: 42px;
 }
 
 h2 {
+    font-size: 34px;
     margin-top: 40px;
-    font-size: 38px;
 }
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
     padding: 30px;
 }
@@ -35,23 +36,23 @@ h2 {
 .card {
     background: #0d2f4f;
     border: 4px solid #00f0ff;
-    border-radius: 28px;
+    border-radius: 25px;
     padding: 20px;
-    box-shadow: 0 0 18px rgba(0,255,255,0.4);
+    box-shadow: 0 0 20px rgba(0,255,255,0.25);
 }
 
 .top-card {
-    background: #3b2a00;
     border-color: gold;
+    background: #3d2d00;
 }
 
 .jolly-card {
-    background: #8b0000;
     border-color: red;
+    background: #8b0000;
 }
 
 .numeri {
-    font-size: 42px;
+    font-size: 38px;
     color: #00f0ff;
     font-weight: bold;
     margin: 20px 0;
@@ -59,7 +60,7 @@ h2 {
 
 .score {
     color: pink;
-    font-size: 26px;
+    font-size: 24px;
 }
 </style>
 </head>
@@ -68,5 +69,78 @@ h2 {
 <h1>🔥 LOTTO ELITE PRO</h1>
 <h2>Motore 8</h2>
 
-<div id="app"></div>
+<div id="contenuto"></div>
+
+<script>
+fetch("./risultati.json")
+.then(response => response.json())
+.then(data => {
+
+    let html = "";
+
+    html += "<h2>🎯 TOP</h2>";
+    html += "<div class='grid'>";
+
+    data.top.forEach(item => {
+        html += `
+            <div class="card top-card">
+                <h3>${item.ruota}</h3>
+                <div class="numeri">
+                    ${item.terno.join(" — ")}
+                </div>
+                <div class="score">
+                    Score: ${item.score}
+                </div>
+            </div>
+        `;
+    });
+
+    html += "</div>";
+
+    html += "<h2>💣 JOLLY</h2>";
+    html += "<div class='grid'>";
+    html += `
+        <div class="card jolly-card">
+            <h3>${data.jolly.ruota}</h3>
+            <div class="numeri">
+                ${data.jolly.terno.join(" — ")}
+            </div>
+        </div>
+    `;
+    html += "</div>";
+
+    html += "<h2>📊 TERNO FORTE</h2>";
+    html += "<div class='grid'>";
+
+    Object.entries(data.ruote).forEach(([ruota, valori]) => {
+        html += `
+            <div class="card">
+                <h3>${ruota}</h3>
+                <p>
+                    <strong>Ultima Estrazione</strong><br>
+                    ${valori.ultima.join(" • ")}
+                </p>
+                <p><strong>Terno Forte</strong></p>
+                <div class="numeri">
+                    ${valori.terno.join(" — ")}
+                </div>
+                <div class="score">
+                    Score: ${valori.score}
+                </div>
+            </div>
+        `;
+    });
+
+    html += "</div>";
+
+    document.getElementById("contenuto").innerHTML = html;
+})
+.catch(error => {
+    document.getElementById("contenuto").innerHTML =
+        "<h2>Errore caricamento risultati.json</h2>";
+    console.log(error);
+});
+</script>
+
+</body>
 </html>
