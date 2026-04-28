@@ -3,27 +3,27 @@
     {
       "ruota": "Palermo",
       "ultima_estrazione": [
-        75,
-        78,
+        37,
+        55,
         68,
-        80,
-        76
+        33,
+        11
       ],
       "terno": [
         26,
         84,
         78
       ],
-      "score": 4664
+      "score": 4564
     },
     {
       "ruota": "Roma",
       "ultima_estrazione": [
-        13,
-        25,
-        67,
-        83,
-        78
+        1,
+        4,
+        36,
+        81,
+        38
       ],
       "terno": [
         67,
@@ -33,63 +33,63 @@
       "score": 4541
     },
     {
-      "ruota": "Venezia",
+      "ruota": "Bari",
       "ultima_estrazione": [
-        13,
-        55,
-        71,
-        89,
-        5
+        38,
+        78,
+        24,
+        40,
+        33
       ],
       "terno": [
-        36,
-        89,
-        67
+        24,
+        52,
+        81
       ],
-      "score": 4276
+      "score": 4371
     }
   ],
   "jolly": {
     "ruota": "Palermo",
     "ultima_estrazione": [
-      75,
-      78,
+      37,
+      55,
       68,
-      80,
-      76
+      33,
+      11
     ],
     "terno": [
       26,
       84,
       78
     ],
-    "score": 4664
+    "score": 4564
   },
   "terno_forte": [
     {
       "ruota": "Palermo",
       "ultima_estrazione": [
-        75,
-        78,
+        37,
+        55,
         68,
-        80,
-        76
+        33,
+        11
       ],
       "terno": [
         26,
         84,
         78
       ],
-      "score": 4664
+      "score": 4564
     },
     {
       "ruota": "Roma",
       "ultima_estrazione": [
-        13,
-        25,
-        67,
-        83,
-        78
+        1,
+        4,
+        36,
+        81,
+        38
       ],
       "terno": [
         67,
@@ -99,13 +99,29 @@
       "score": 4541
     },
     {
+      "ruota": "Bari",
+      "ultima_estrazione": [
+        38,
+        78,
+        24,
+        40,
+        33
+      ],
+      "terno": [
+        24,
+        52,
+        81
+      ],
+      "score": 4371
+    },
+    {
       "ruota": "Venezia",
       "ultima_estrazione": [
-        13,
-        55,
-        71,
-        89,
-        5
+        70,
+        85,
+        24,
+        56,
+        53
       ],
       "terno": [
         36,
@@ -115,45 +131,13 @@
       "score": 4276
     },
     {
-      "ruota": "Bari",
-      "ultima_estrazione": [
-        15,
-        88,
-        36,
-        90,
-        37
-      ],
-      "terno": [
-        52,
-        24,
-        81
-      ],
-      "score": 4271
-    },
-    {
-      "ruota": "Torino",
-      "ultima_estrazione": [
-        30,
-        39,
-        63,
-        72,
-        81
-      ],
-      "terno": [
-        85,
-        75,
-        59
-      ],
-      "score": 4257
-    },
-    {
       "ruota": "Cagliari",
       "ultima_estrazione": [
-        49,
-        22,
-        46,
-        28,
-        86
+        26,
+        80,
+        5,
+        1,
+        48
       ],
       "terno": [
         49,
@@ -163,29 +147,29 @@
       "score": 4217
     },
     {
-      "ruota": "Firenze",
+      "ruota": "Torino",
       "ultima_estrazione": [
-        7,
-        85,
-        14,
-        84,
-        55
+        17,
+        15,
+        75,
+        69,
+        76
       ],
       "terno": [
-        50,
-        15,
-        72
+        75,
+        59,
+        26
       ],
-      "score": 4211
+      "score": 4180
     },
     {
       "ruota": "Genova",
       "ultima_estrazione": [
-        89,
-        69,
-        88,
-        41,
-        81
+        68,
+        39,
+        49,
+        59,
+        13
       ],
       "terno": [
         43,
@@ -195,13 +179,29 @@
       "score": 4113
     },
     {
+      "ruota": "Firenze",
+      "ultima_estrazione": [
+        80,
+        71,
+        74,
+        22,
+        67
+      ],
+      "terno": [
+        15,
+        72,
+        50
+      ],
+      "score": 4111
+    },
+    {
       "ruota": "Napoli",
       "ultima_estrazione": [
-        83,
-        72,
-        60,
-        16,
-        21
+        43,
+        80,
+        6,
+        78,
+        82
       ],
       "terno": [
         16,
@@ -213,18 +213,18 @@
     {
       "ruota": "Milano",
       "ultima_estrazione": [
-        71,
-        43,
-        45,
-        25,
-        3
+        40,
+        19,
+        8,
+        62,
+        84
       ],
       "terno": [
         21,
-        68,
-        48
+        8,
+        68
       ],
-      "score": 3811
+      "score": 3791
     }
   ]
 }
