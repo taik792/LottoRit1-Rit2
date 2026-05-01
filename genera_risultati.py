@@ -14,7 +14,7 @@ RUOTE = [
     "Nazionale"
 ]
 
-NUMERO_ESTRAZIONI = 200  # qui il motore usa storico lungo
+NUMERO_ESTRAZIONI = 500  # qui il motore usa storico lungo
 
 
 def carica_estrazioni():
